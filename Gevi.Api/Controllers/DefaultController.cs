@@ -9,6 +9,5 @@ namespace Gevi.Api.Controllers
 {
     public class DefaultController : ApiController
     {
-
     }
 }
