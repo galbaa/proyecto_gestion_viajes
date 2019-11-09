@@ -20,5 +20,7 @@ namespace Gevi.Api.Models
         }
 
         public System.Data.Entity.DbSet<Gevi.Api.Models.Viaje> Viajes { get; set; }
+
+        public System.Data.Entity.DbSet<Gevi.Api.Models.Usuario> Usuarios { get; set; }
     }
 }
