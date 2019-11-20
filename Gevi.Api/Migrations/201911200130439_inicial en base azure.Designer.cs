@@ -7,13 +7,13 @@ namespace Gevi.Api.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Inicial : IMigrationMetadata
+    public sealed partial class inicialenbaseazure : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Inicial));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(inicialenbaseazure));
         
         string IMigrationMetadata.Id
         {
-            get { return "201911090228078_Inicial"; }
+            get { return "201911200130439_inicial en base azure"; }
         }
         
         string IMigrationMetadata.Source

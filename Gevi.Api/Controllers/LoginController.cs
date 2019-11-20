@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Gevi.Api.Models;
+using System.Threading;
 
 namespace Gevi.Api.Controllers
 {
@@ -17,7 +18,56 @@ namespace Gevi.Api.Controllers
     {
         private GeviApiContext db = new GeviApiContext();
 
+        /*[Route("Login")]
+        [HttpPost]
+        public Response Login(Login login)
+        {
+            var log = DB.EmployeeLogins.Where(x => x.Email.Equals(login.Email) && x.Password.Equals(login.Password)).FirstOrDefault();
+            if (log == null)
+            {
+                return new Response { Status = "Invalid", Message = "Invalid User." };
+            }
+            else
+                return new Response { Status = "Success", Message = "Login Successfully" };
+        }*/
+
+        [HttpGet]
+        [Route("echoping")]
+        public IHttpActionResult EchoPing()
+        {
+            return Ok(true);
+        }
+
+        [HttpGet]
+        [Route("echouser")]
+        public IHttpActionResult EchoUser()
+        {
+            var identity = Thread.CurrentPrincipal.Identity;
+            return Ok($" IPrincipal-user: {identity.Name} - IsAuthenticated: {identity.IsAuthenticated}");
+        }
+
+        [HttpPost]
+        [Route("authenticate")]
+        public IHttpActionResult Authenticate(LoginRequest login)
+        {
+            if (login == null)
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+
+            //TODO: Validate credentials Correctly, this code is only for demo !!
+            bool isCredentialValid = (login.Password == "123456");
+            if (isCredentialValid)
+            {
+                var token = TokenGeneratorController.GenerateTokenJwt(login.Username);
+                return Ok(token);
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+
         // GET: api/Login
+        [Authorize]
         public IQueryable<Usuario> GetUsuarios()
         {
             return db.Usuarios;

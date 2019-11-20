@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gevi.Api.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -13,6 +14,8 @@ namespace Gevi.Api
 
             // Rutas de API web
             config.MapHttpAttributeRoutes();
+
+            config.MessageHandlers.Add(new TokenValidationHandlerController());
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
