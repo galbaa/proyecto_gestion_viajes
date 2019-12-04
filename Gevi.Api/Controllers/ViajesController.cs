@@ -72,18 +72,33 @@ namespace Gevi.Api.Controllers
         }
 
         // POST: api/Viajes
-        [ResponseType(typeof(Viaje))]
+        [Route("viajes/nuevo")]
         public async Task<IHttpActionResult> PostViaje(Viaje viaje)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return this.Content(HttpStatusCode.BadRequest, new HttpResponse<string>()
+                {
+                    StatusCode = 400,
+                    ApiResponse = new ApiResponse<string>()
+                    {
+                        Data = null,
+                        Error = new Error("El viaje que se intenta ingresar es invalido")
+                    }
+                });
             }
-
             db.Viajes.Add(viaje);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = viaje.Id }, viaje);
+            return this.Content(HttpStatusCode.Created, new HttpResponse<string>()
+            {
+                StatusCode = 201,
+                ApiResponse = new ApiResponse<string>()
+                {
+                    Data = "Viaje ingresado correctamente",
+                    Error = null
+                }
+            });
         }
 
         // DELETE: api/Viajes/5

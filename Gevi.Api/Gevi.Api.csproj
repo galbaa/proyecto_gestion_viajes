@@ -146,6 +146,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\TokenGeneratorController.cs" />
     <Compile Include="Controllers\TokenValidationHandlerController.cs" />
+    <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -156,14 +157,18 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Administrativo.cs" />
+    <Compile Include="Models\ApiResponse.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\Empleado.cs" />
+    <Compile Include="Models\Error.cs" />
     <Compile Include="Models\Gasto.cs" />
     <Compile Include="Models\GeviApiContext.cs" />
+    <Compile Include="Models\HttpResponse.cs" />
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\Proyecto.cs" />
     <Compile Include="Models\TipoCliente.cs" />
     <Compile Include="Models\Usuario.cs" />
+    <Compile Include="Models\UsuarioRequest.cs" />
     <Compile Include="Models\Viaje.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

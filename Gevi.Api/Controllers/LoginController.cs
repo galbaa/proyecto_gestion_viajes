@@ -17,19 +17,7 @@ namespace Gevi.Api.Controllers
     public class LoginController : ApiController
     {
         private GeviApiContext db = new GeviApiContext();
-
-        /*[Route("Login")]
-        [HttpPost]
-        public Response Login(Login login)
-        {
-            var log = DB.EmployeeLogins.Where(x => x.Email.Equals(login.Email) && x.Password.Equals(login.Password)).FirstOrDefault();
-            if (log == null)
-            {
-                return new Response { Status = "Invalid", Message = "Invalid User." };
-            }
-            else
-                return new Response { Status = "Success", Message = "Login Successfully" };
-        }*/
+        
 
         [HttpGet]
         [Route("echoping")]
@@ -52,10 +40,9 @@ namespace Gevi.Api.Controllers
         {
             if (login == null)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
-
+            var user = db.Usuarios.Where(u => u.Email.Equals(login.Username) && u.Contrasenia.Equals(login.Password));
             //TODO: Validate credentials Correctly, this code is only for demo !!
-            bool isCredentialValid = (login.Password == "123456");
-            if (isCredentialValid)
+            if (user != null)
             {
                 var token = TokenGeneratorController.GenerateTokenJwt(login.Username);
                 return Ok(token);

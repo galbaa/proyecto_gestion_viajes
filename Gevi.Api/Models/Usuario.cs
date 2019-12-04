@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Gevi.Api.Models
 {
-    public class Usuario
+    public abstract class Usuario
     {
         public int Id { get; set; }
         [Required]
