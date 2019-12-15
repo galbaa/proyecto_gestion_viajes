@@ -18,7 +18,6 @@ namespace Gevi.Api.Controllers
     {
         private GeviApiContext db = new GeviApiContext();
         
-
         [HttpGet]
         [Route("echoping")]
         public IHttpActionResult EchoPing()
@@ -40,16 +39,36 @@ namespace Gevi.Api.Controllers
         {
             if (login == null)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
-            var user = db.Usuarios.Where(u => u.Email.Equals(login.Username) && u.Contrasenia.Equals(login.Password));
-            //TODO: Validate credentials Correctly, this code is only for demo !!
+            var user = db.Usuarios.Where(u => u.Email.Equals(login.Username) 
+                        && u.Contrasenia.Equals(login.Password)).FirstOrDefault();
+            
             if (user != null)
             {
                 var token = TokenGeneratorController.GenerateTokenJwt(login.Username);
-                return Ok(token);
+                return this.Content(HttpStatusCode.OK, new HttpResponse<UsuarioResponse>()
+                {
+                    StatusCode = 200,
+                    ApiResponse = new ApiResponse<UsuarioResponse>()
+                    {
+                        Data = new UsuarioResponse()
+                        {
+
+                        },
+                        Error = null
+                    }
+                });
             }
             else
             {
-                return Unauthorized();
+                return this.Content(HttpStatusCode.Unauthorized, new HttpResponse<Error>()
+                {
+                    StatusCode = 401,
+                    ApiResponse = new ApiResponse<Error>()
+                    {
+                        Data = null,
+                        Error = new Error("Login invalido. Verifique las credenciales.")
+                    }
+                });
             }
         }
 

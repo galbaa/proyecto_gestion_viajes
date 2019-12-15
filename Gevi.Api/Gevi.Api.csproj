@@ -168,6 +168,7 @@
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\Proyecto.cs" />
     <Compile Include="Models\TipoCliente.cs" />
+    <Compile Include="Models\UsuarioResponse.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\UsuarioRequest.cs" />
     <Compile Include="Models\Viaje.cs" />

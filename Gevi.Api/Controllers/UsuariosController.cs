@@ -18,7 +18,7 @@ namespace Gevi.Api.Controllers
         private GeviApiContext db = new GeviApiContext();
 
         [Route("usuarios")]
-        public async Task<IHttpActionResult> GetUsuarios()
+        public IHttpActionResult GetUsuarios()
         {
             var usuarios = db.Usuarios;
             if (usuarios == null)
