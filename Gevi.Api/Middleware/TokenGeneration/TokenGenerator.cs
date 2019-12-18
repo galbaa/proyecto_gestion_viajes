@@ -1,16 +1,11 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
-using System.Web.Http;
 
-namespace Gevi.Api.Controllers
+namespace Gevi.Api.Middleware.TokenGeneration
 {
-    public class TokenGeneratorController
+    public class TokenGenerator
     {
         public static string GenerateTokenJwt(string username)
         {

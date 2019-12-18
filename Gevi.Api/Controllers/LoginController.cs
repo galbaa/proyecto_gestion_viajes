@@ -1,50 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+﻿using System.Data;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
 using Gevi.Api.Models;
-using System.Threading;
+using Gevi.Api.Middleware.TokenGeneration;
 
 namespace Gevi.Api.Controllers
 {
     public class LoginController : ApiController
     {
         private GeviApiContext db = new GeviApiContext();
-        
-        [HttpGet]
-        [Route("echoping")]
-        public IHttpActionResult EchoPing()
-        {
-            return Ok(true);
-        }
-
-        [HttpGet]
-        [Route("echouser")]
-        public IHttpActionResult EchoUser()
-        {
-            var identity = Thread.CurrentPrincipal.Identity;
-            return Ok($" IPrincipal-user: {identity.Name} - IsAuthenticated: {identity.IsAuthenticated}");
-        }
 
         [HttpPost]
-        [Route("authenticate")]
-        public IHttpActionResult Authenticate(LoginRequest login)
+        [Route("login")]
+        public IHttpActionResult Login(LoginRequest request)
         {
-            if (login == null)
+            if (request == null)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
-            var user = db.Usuarios.Where(u => u.Email.Equals(login.Username) 
-                        && u.Contrasenia.Equals(login.Password)).FirstOrDefault();
+
+            var user = db.Usuarios.Where(u => u.Email.Equals(request.Username) 
+                        && u.Contrasenia.Equals(request.Password)).FirstOrDefault();
             
             if (user != null)
             {
-                var token = TokenGeneratorController.GenerateTokenJwt(login.Username);
+                var token = TokenGenerator.GenerateTokenJwt(request.Username);
                 return this.Content(HttpStatusCode.OK, new HttpResponse<UsuarioResponse>()
                 {
                     StatusCode = 200,
@@ -52,7 +31,11 @@ namespace Gevi.Api.Controllers
                     {
                         Data = new UsuarioResponse()
                         {
-
+                            Id = user.Id,
+                            Email = user.Email,
+                            Nombre = user.Nombre,
+                            FechaRegistro = user.FechaRegistro,
+                            Token = token
                         },
                         Error = null
                     }
@@ -72,92 +55,6 @@ namespace Gevi.Api.Controllers
             }
         }
 
-        // GET: api/Login
-        [Authorize]
-        public IQueryable<Usuario> GetUsuarios()
-        {
-            return db.Usuarios;
-        }
-
-        // GET: api/Login/5
-        [ResponseType(typeof(Usuario))]
-        public async Task<IHttpActionResult> GetUsuario(int id)
-        {
-            Usuario usuario = await db.Usuarios.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(usuario);
-        }
-
-        // PUT: api/Login/5
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutUsuario(int id, Usuario usuario)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != usuario.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(usuario).State = EntityState.Modified;
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UsuarioExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/Login
-        [ResponseType(typeof(Usuario))]
-        public async Task<IHttpActionResult> PostUsuario(Usuario usuario)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Usuarios.Add(usuario);
-            await db.SaveChangesAsync();
-
-            return CreatedAtRoute("DefaultApi", new { id = usuario.Id }, usuario);
-        }
-
-        // DELETE: api/Login/5
-        [ResponseType(typeof(Usuario))]
-        public async Task<IHttpActionResult> DeleteUsuario(int id)
-        {
-            Usuario usuario = await db.Usuarios.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            db.Usuarios.Remove(usuario);
-            await db.SaveChangesAsync();
-
-            return Ok(usuario);
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -167,9 +64,5 @@ namespace Gevi.Api.Controllers
             base.Dispose(disposing);
         }
 
-        private bool UsuarioExists(int id)
-        {
-            return db.Usuarios.Count(e => e.Id == id) > 0;
-        }
     }
 }

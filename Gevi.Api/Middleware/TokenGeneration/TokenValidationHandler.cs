@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
-namespace Gevi.Api.Controllers
+namespace Gevi.Api.Middleware.TokenGeneration
 {
-    public class TokenValidationHandlerController : DelegatingHandler
+    public class TokenValidationHandler : DelegatingHandler
     {
         private static bool TryRetrieveToken(HttpRequestMessage request, out string token)
         {

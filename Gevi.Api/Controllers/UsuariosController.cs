@@ -109,7 +109,7 @@ namespace Gevi.Api.Controllers
 
         // POST: api/Usuarios
         [Route("usuarios/nuevo")]
-        public async Task<IHttpActionResult> PostUsuario(Usuario usuario)
+        public async Task<IHttpActionResult> PostUsuario([FromBody]UsuarioRequest usuario)
         {
             if (!ModelState.IsValid)
             {
@@ -123,16 +123,63 @@ namespace Gevi.Api.Controllers
                     }
                 });
             }
-            usuario.FechaRegistro = DateTime.Today;
-            db.Usuarios.Add(usuario);
-            await db.SaveChangesAsync();
+            Usuario nuevo = null;
+            switch (usuario.EsEmpleado)
+            {
+                case true:
+                    nuevo = new Empleado()
+                    {
+                        Email = usuario.Email,
+                        Contrasenia = usuario.Contrasenia,
+                        Nombre = usuario.Nombre,
+                        FechaRegistro = DateTime.Now,
+                        Viajes = null
+                    };
+                    break;
+                case false:
+                    nuevo = new Administrativo()
+                    {
+                        Email = usuario.Email,
+                        Contrasenia = usuario.Contrasenia,
+                        Nombre = usuario.Nombre,
+                        FechaRegistro = DateTime.Now
+                    };
+                    break;
+                default:
+                    break;
+            }
+            try
+            {
+                db.Usuarios.Add(nuevo);
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return this.Content(HttpStatusCode.InternalServerError, new HttpResponse<Error>()
+                {
+                    StatusCode = 500,
+                    ApiResponse = new ApiResponse<Error>()
+                    {
+                        Data = null,
+                        Error = new Error("Ya existe un usuario con ese email.")
+                    }
+                });
+            }
+            
 
-            return this.Content(HttpStatusCode.Created, new HttpResponse<string>()
+            return this.Content(HttpStatusCode.Created, new HttpResponse<UsuarioResponse>()
             {
                 StatusCode = 201,
-                ApiResponse = new ApiResponse<string>()
+                ApiResponse = new ApiResponse<UsuarioResponse>()
                 {
-                    Data = "Usuario ingresado correctamente",
+                    Data = new UsuarioResponse()
+                    {
+                        Id = db.Usuarios.OrderByDescending(u => u.Id).Select(u => u.Id).FirstOrDefault(),
+                        Email = nuevo.Email,
+                        Nombre = nuevo.Nombre,
+                        FechaRegistro = DateTime.Today,
+                        Token = null
+                    },
                     Error = null
                 }
             });
