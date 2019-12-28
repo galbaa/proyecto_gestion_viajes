@@ -15,7 +15,7 @@ namespace Gevi.Api.Controllers
 {
     public class ViajesController : ApiController
     {
-        private GeviApiContext db = new GeviApiContext();
+        /*private GeviApiContext db = new GeviApiContext();
 
         // GET: api/Viajes
         public IQueryable<Viaje> GetViajes()
@@ -130,5 +130,6 @@ namespace Gevi.Api.Controllers
         {
             return db.Viajes.Count(e => e.Id == id) > 0;
         }
+        */
     }
 }

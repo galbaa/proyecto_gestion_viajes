@@ -149,6 +149,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="IndexModule.cs" />
+    <Compile Include="Middleware\Interfaces\ILoginManager.cs" />
     <Compile Include="Middleware\LoginManager.cs" />
     <Compile Include="Middleware\TokenGeneration\TokenGenerator.cs" />
     <Compile Include="Middleware\TokenGeneration\TokenValidationHandler.cs" />

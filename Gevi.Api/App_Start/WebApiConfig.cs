@@ -1,15 +1,12 @@
 ﻿using Gevi.Api.Middleware.TokenGeneration;
 using System.Web.Http;
-
+using Nancy;
 namespace Gevi.Api
 {
     public static class WebApiConfig
     {
         public static void Register(HttpConfiguration config)
         {
-            // Configuración y servicios de API web
-
-            // Rutas de API web
             config.MapHttpAttributeRoutes();
 
             config.MessageHandlers.Add(new TokenValidationHandler());
