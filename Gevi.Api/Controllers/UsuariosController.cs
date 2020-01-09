@@ -12,11 +12,13 @@ using Gevi.Api.Middleware;
 
 namespace Gevi.Api.Controllers
 {
+    [Authorize]
+    [RoutePrefix("usuarios")]
     public class UsuariosController : ApiController
     {
         private GeviApiContext db = new GeviApiContext();
 
-        [Route("usuarios/{id}")]
+        [Route("{id}")]
         public async Task<IHttpActionResult> GetUsuario(int id)
         {
             Usuario usuario = await db.Usuarios.FindAsync(id);
@@ -33,7 +35,7 @@ namespace Gevi.Api.Controllers
                 });
             }
             
-            return Ok(new HttpResponse<Usuario>()
+            return this.Content(HttpStatusCode.OK, new HttpResponse<Usuario>()
             {
                 StatusCode = 200,
                 ApiResponse = new ApiResponse<Usuario>()
@@ -44,10 +46,6 @@ namespace Gevi.Api.Controllers
             });
         }
 
-        
-
-        // PUT: api/Usuarios/5
-        [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutUsuario(int id, Usuario usuario)
         {
             if (!ModelState.IsValid)
@@ -77,13 +75,12 @@ namespace Gevi.Api.Controllers
                     throw;
                 }
             }
-
             return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpPost]
-        [Route("usuarios/nuevo")]
-        public async Task<IHttpActionResult> NuevoUsuario([FromBody]UsuarioRequest usuario)
+        [Route("nuevo")]
+        public async Task<IHttpActionResult> NuevoUsuario(UsuarioRequest usuario)
         {
             if (!ModelState.IsValid)
             {
@@ -123,13 +120,13 @@ namespace Gevi.Api.Controllers
                     break;
             }
             var encryptionManager = new EncryptionManager();
-            nuevo.Contrasenia = encryptionManager.EncryptData(nuevo.Contrasenia);
+            nuevo.Contrasenia = encryptionManager.Encryptdata(nuevo.Contrasenia);
             try
             {
                 db.Usuarios.Add(nuevo);
                 await db.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return this.Content(HttpStatusCode.InternalServerError, new HttpResponse<Error>()
                 {

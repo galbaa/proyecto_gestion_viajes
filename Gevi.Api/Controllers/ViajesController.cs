@@ -13,9 +13,11 @@ using Gevi.Api.Models;
 
 namespace Gevi.Api.Controllers
 {
+    [Authorize]
+    [RoutePrefix("viajes")]
     public class ViajesController : ApiController
     {
-        /*private GeviApiContext db = new GeviApiContext();
+        private GeviApiContext db = new GeviApiContext();
 
         // GET: api/Viajes
         public IQueryable<Viaje> GetViajes()
@@ -71,9 +73,9 @@ namespace Gevi.Api.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Viajes
-        [Route("viajes/nuevo")]
-        public async Task<IHttpActionResult> PostViaje(Viaje viaje)
+        [HttpPost]
+        [Route("nuevo")]
+        public async Task<IHttpActionResult> NuevoViaje(ViajeRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -87,15 +89,25 @@ namespace Gevi.Api.Controllers
                     }
                 });
             }
-            db.Viajes.Add(viaje);
+            var empleado = (Empleado)db.Usuarios.Where(u => u is Empleado && u.Id == request.EmpleadoId).FirstOrDefault();
+            var nuevo = new Viaje()
+            {
+                Empleado = empleado,
+                Estado = Estado.PENDIENTE_APROBACION,
+                FechaInicio = request.FechaInicio,
+                FechaFin = request.FechaFin,
+                Gastos = null,
+                Proyecto = null
+            };
+            db.Viajes.Add(nuevo);
             await db.SaveChangesAsync();
 
-            return this.Content(HttpStatusCode.Created, new HttpResponse<string>()
+            return this.Content(HttpStatusCode.Created, new HttpResponse<Viaje>()
             {
                 StatusCode = 201,
-                ApiResponse = new ApiResponse<string>()
+                ApiResponse = new ApiResponse<Viaje>()
                 {
-                    Data = "Viaje ingresado correctamente",
+                    Data = nuevo,
                     Error = null
                 }
             });
@@ -130,6 +142,5 @@ namespace Gevi.Api.Controllers
         {
             return db.Viajes.Count(e => e.Id == id) > 0;
         }
-        */
     }
 }

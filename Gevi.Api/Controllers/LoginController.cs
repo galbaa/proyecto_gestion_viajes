@@ -4,22 +4,28 @@ using System.Net;
 using System.Web.Http;
 using Gevi.Api.Models;
 using Gevi.Api.Middleware.TokenGeneration;
+using Gevi.Api.Middleware;
 
 namespace Gevi.Api.Controllers
 {
+    [AllowAnonymous]
+    [RoutePrefix("login")]
     public class LoginController : ApiController
     {
         private GeviApiContext db = new GeviApiContext();
 
         [HttpPost]
-        [Route("login")]
+        [Route("standard")]
         public IHttpActionResult Login(LoginRequest request)
         {
             if (request == null)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
+ 
+            var encryptionManager = new EncryptionManager();
+            var password = encryptionManager.Encryptdata(request.Password);
 
-            var user = db.Usuarios.Where(u => u.Email.Equals(request.Username) 
-                        && u.Contrasenia.Equals(request.Password)).FirstOrDefault();
+            var user = db.Usuarios.Where(u => u.Email.Equals(request.Username)
+                        && u.Contrasenia.Equals(password)).FirstOrDefault();
             
             if (user != null)
             {
