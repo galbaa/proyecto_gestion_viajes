@@ -10,6 +10,6 @@ namespace Gevi.Api.Middleware.Interfaces
 {
     public interface ILoginManager
     {
-        HttpResponse<UsuarioResponse> Login(string username, string password, NancyContext context);
+        HttpResponse<UsuarioResponse> Login(string username, string password);
     }
 }
