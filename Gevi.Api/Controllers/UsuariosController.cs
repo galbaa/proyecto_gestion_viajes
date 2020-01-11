@@ -12,8 +12,6 @@ using Gevi.Api.Middleware;
 
 namespace Gevi.Api.Controllers
 {
-    [Authorize]
-    [RoutePrefix("usuarios")]
     public class UsuariosController : ApiController
     {
     //    private GeviApiContext db = new GeviApiContext();
