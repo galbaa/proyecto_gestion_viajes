@@ -12,62 +12,62 @@ namespace Gevi.Api.Controllers
     [RoutePrefix("login")]
     public class LoginController : ApiController
     {
-        private GeviApiContext db = new GeviApiContext();
+        //private GeviApiContext db = new GeviApiContext();
 
-        [HttpPost]
-        [Route("standard")]
-        public IHttpActionResult Login(LoginRequest request)
-        {
-            if (request == null)
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+        //[HttpPost]
+        //[Route("standard")]
+        //public IHttpActionResult Login(LoginRequest request)
+        //{
+        //    if (request == null)
+        //        throw new HttpResponseException(HttpStatusCode.BadRequest);
  
-            var encryptionManager = new EncryptionManager();
-            var password = encryptionManager.Encryptdata(request.Password);
+        //    var encryptionManager = new EncryptionManager();
+        //    var password = encryptionManager.Encryptdata(request.Password);
 
-            var user = db.Usuarios.Where(u => u.Email.Equals(request.Username)
-                        && u.Contrasenia.Equals(password)).FirstOrDefault();
+        //    var user = db.Usuarios.Where(u => u.Email.Equals(request.Username)
+        //                && u.Contrasenia.Equals(password)).FirstOrDefault();
             
-            if (user != null)
-            {
-                var token = TokenGenerator.GenerateTokenJwt(request.Username);
-                return this.Content(HttpStatusCode.OK, new HttpResponse<UsuarioResponse>()
-                {
-                    StatusCode = 200,
-                    ApiResponse = new ApiResponse<UsuarioResponse>()
-                    {
-                        Data = new UsuarioResponse()
-                        {
-                            Id = user.Id,
-                            Email = user.Email,
-                            Nombre = user.Nombre,
-                            FechaRegistro = user.FechaRegistro,
-                            Token = token
-                        },
-                        Error = null
-                    }
-                });
-            }
-            else
-            {
-                return this.Content(HttpStatusCode.Unauthorized, new HttpResponse<Error>()
-                {
-                    StatusCode = 401,
-                    ApiResponse = new ApiResponse<Error>()
-                    {
-                        Data = null,
-                        Error = new Error("Login invalido. Verifique las credenciales.")
-                    }
-                });
-            }
-        }
+        //    if (user != null)
+        //    {
+        //        var token = TokenGenerator.GenerateTokenJwt(request.Username);
+        //        return this.Content(HttpStatusCode.OK, new HttpResponse<UsuarioResponse>()
+        //        {
+        //            StatusCode = 200,
+        //            ApiResponse = new ApiResponse<UsuarioResponse>()
+        //            {
+        //                Data = new UsuarioResponse()
+        //                {
+        //                    Id = user.Id,
+        //                    Email = user.Email,
+        //                    Nombre = user.Nombre,
+        //                    FechaRegistro = user.FechaRegistro,
+        //                    Token = token
+        //                },
+        //                Error = null
+        //            }
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return this.Content(HttpStatusCode.Unauthorized, new HttpResponse<Error>()
+        //        {
+        //            StatusCode = 401,
+        //            ApiResponse = new ApiResponse<Error>()
+        //            {
+        //                Data = null,
+        //                Error = new Error("Login invalido. Verifique las credenciales.")
+        //            }
+        //        });
+        //    }
+        //}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
     }
 }
