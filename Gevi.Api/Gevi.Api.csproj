@@ -196,6 +196,7 @@
     <Compile Include="Models\UsuarioRequest.cs" />
     <Compile Include="Models\Viaje.cs" />
     <Compile Include="Models\ViajeRequest.cs" />
+    <Compile Include="Models\ViajeResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
