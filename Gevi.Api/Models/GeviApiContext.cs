@@ -17,6 +17,7 @@ namespace Gevi.Api.Models
     
         public GeviApiContext() : base("name=GeviDatabase")
         {
+            this.Configuration.ProxyCreationEnabled = false;
         }
 
         public System.Data.Entity.DbSet<Gevi.Api.Models.Viaje> Viajes { get; set; }

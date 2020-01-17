@@ -11,20 +11,22 @@ namespace Gevi.Api.Middleware
 {
     public class ViajesManager : IViajesManager
     {
-        public HttpResponse<Viaje> NuevoViaje(ViajeRequest viaje)
+        public HttpResponse<ViajeResponse> NuevoViaje(ViajeRequest viaje)
         {
             if (viaje == null)
                 return newHttpErrorResponse(new Error("El viaje que se intenta ingresar es invalido."));
 
             using (var db = new GeviApiContext())
             {
-                var empleado = (Empleado)db.Usuarios.Where(u => u is Empleado && u.Id == viaje.EmpleadoId).FirstOrDefault();
+                var empleado = (Empleado)db.Usuarios
+                                    .Where(u => u is Empleado && u.Id == viaje.EmpleadoId)
+                                    .FirstOrDefault();
 
                 if (esValido(viaje, db, empleado))
                 {
-                    var nuevo = new Viaje()
+                    var nuevo = new ViajeResponse()
                     {
-                        Empleado = empleado,
+                        EmpleadoId = empleado.Id,
                         Estado = Estado.PENDIENTE_APROBACION,
                         FechaInicio = viaje.FechaInicio,
                         FechaFin = viaje.FechaFin,
@@ -35,7 +37,7 @@ namespace Gevi.Api.Middleware
                     try
                     {
                         db.Viajes.Add(nuevo);
-                        db.SaveChangesAsync();
+                        db.SaveChanges();
                     }
                     catch (DbUpdateException)
                     {
@@ -51,12 +53,12 @@ namespace Gevi.Api.Middleware
             }
         }
 
-        private HttpResponse<Viaje> newHttpResponse(Viaje response)
+        private HttpResponse<ViajeResponse> newHttpResponse(ViajeResponse response)
         {
-            return new HttpResponse<Viaje>()
+            return new HttpResponse<ViajeResponse>()
             {
                 StatusCode = HttpStatusCode.OK,
-                ApiResponse = new ApiResponse<Viaje>()
+                ApiResponse = new ApiResponse<ViajeResponse>()
                 {
                     Data = response,
                     Error = null
@@ -64,12 +66,12 @@ namespace Gevi.Api.Middleware
             };
         }
 
-        private HttpResponse<Viaje> newHttpErrorResponse(Error error)
+        private HttpResponse<ViajeResponse> newHttpErrorResponse(Error error)
         {
-            return new HttpResponse<Viaje>()
+            return new HttpResponse<ViajeResponse>()
             {
                 StatusCode = HttpStatusCode.InternalServerError,
-                ApiResponse = new ApiResponse<Viaje>()
+                ApiResponse = new ApiResponse<ViajeResponse>()
                 {
                     Data = null,
                     Error = error
@@ -79,14 +81,36 @@ namespace Gevi.Api.Middleware
 
         private bool esValido(ViajeRequest viaje, GeviApiContext ctx, Empleado emp)
         {
-            var res = ctx.Viajes.Where(v => v.Empleado.Email.Equals(emp.Email)).FirstOrDefault();
+            var res = ctx.Viajes
+                        .Where(v => v.Empleado.Email.Equals(emp.Email))
+                        .ToList();
+            bool valor = true;
 
-            var valorFechaInicio = DateTime.Compare(viaje.FechaInicio, res.FechaInicio);
-            var valorFechaFin = DateTime.Compare(viaje.FechaFin, res.FechaFin);
+            if (res.Count != 0)
+            {
+                foreach(var v in res)
+                {
+                    var inicioViajeNuevoValido = NotBetween(viaje.FechaInicio, v.FechaInicio, v.FechaFin);
+                    var finViajeNuevoValido = NotBetween(viaje.FechaFin, v.FechaInicio, v.FechaFin);
 
-            bool valor = valorFechaInicio > 0 && valorFechaFin < 0;
+                    if (inicioViajeNuevoValido && finViajeNuevoValido)
+                    {
+                        var inicioViajeExistenteValido = NotBetween(v.FechaInicio, viaje.FechaInicio, viaje.FechaFin);
+                        var finViajeExistenteValido = NotBetween(v.FechaFin, viaje.FechaInicio, viaje.FechaFin);
+
+                        return (inicioViajeExistenteValido && finViajeExistenteValido);
+                    }
+
+                    return false;
+                }
+            }
 
             return valor;
+        }
+
+        private bool NotBetween(DateTime input, DateTime date1, DateTime date2)
+        {
+            return (input < date1 || input > date2);
         }
     }
 }

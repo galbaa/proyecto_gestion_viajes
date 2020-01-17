@@ -9,6 +9,6 @@ namespace Gevi.Api.Middleware.Interfaces
 {
     public interface IViajesManager
     {
-        HttpResponse<Viaje> NuevoViaje(ViajeRequest viaje);
+        HttpResponse<ViajeResponse> NuevoViaje(ViajeRequest viaje);
     }
 }
