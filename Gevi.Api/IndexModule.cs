@@ -2,6 +2,7 @@
 using Gevi.Api.Models;
 using Nancy.ModelBinding;
 using Gevi.Api.Middleware.Interfaces;
+using Gevi.Api.Models.Requests;
 
 namespace Gevi.Api
 {
@@ -9,7 +10,8 @@ namespace Gevi.Api
     {
         public IndexModule(ILoginManager loginManager,
             IUsuariosManager usuariosManager,
-            IViajesManager viajesManager)
+            IViajesManager viajesManager,
+            IClientesManager clientesManager)
         {
             Post["login/standard"] = parameters =>
             {
@@ -42,6 +44,39 @@ namespace Gevi.Api
                     .WithContentType("application/json")
                     .WithStatusCode(viajeResponse.StatusCode)
                     .WithModel(viajeResponse.ApiResponse);
+            };
+
+            Put["viajes/validar"] = parameters =>
+            {
+                var validacionRequest = this.Bind<ValidacionRequest>();
+                var viajeResponse = viajesManager.ValidarViaje(validacionRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(viajeResponse.StatusCode)
+                    .WithModel(viajeResponse.ApiResponse);
+            };
+
+            Post["clientes/nuevo"] = parameters =>
+            {
+                var clienteRequest = this.Bind<ClienteRequest>();
+                var clienteResponse = clientesManager.NuevoCliente(clienteRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(clienteResponse.StatusCode)
+                    .WithModel(clienteResponse.ApiResponse);
+            };
+
+            Delete["clientes/eliminar"] = parameters =>
+            {
+                var clienteRequest = this.Bind<ClienteRequest>(cr => cr.Nombre);
+                var clienteResponse = clientesManager.BorrarCliente(clienteRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(clienteResponse.StatusCode)
+                    .WithModel(clienteResponse.ApiResponse);
             };
         }
     }

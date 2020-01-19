@@ -2,10 +2,9 @@
 using Gevi.Api.Models;
 using Nancy;
 using System;
-using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Web;
 
 namespace Gevi.Api.Middleware
 {
@@ -24,9 +23,19 @@ namespace Gevi.Api.Middleware
 
                 if (esValido(viaje, db, empleado))
                 {
-                    var nuevo = new ViajeResponse()
+                    var response = new ViajeResponse()
                     {
                         EmpleadoId = empleado.Id,
+                        Estado = Estado.PENDIENTE_APROBACION,
+                        FechaInicio = viaje.FechaInicio,
+                        FechaFin = viaje.FechaFin,
+                        Gastos = null,
+                        Proyecto = null
+                    };
+
+                    var nuevo = new Viaje()
+                    {
+                        Empleado = empleado,
                         Estado = Estado.PENDIENTE_APROBACION,
                         FechaInicio = viaje.FechaInicio,
                         FechaFin = viaje.FechaFin,
@@ -44,12 +53,46 @@ namespace Gevi.Api.Middleware
                         return newHttpErrorResponse(new Error("Ya existe un viaje con ese email."));
                     }
 
-                    return newHttpResponse(nuevo);
+                    return newHttpResponse(response);
                 }
                 else
                 {
                     return newHttpErrorResponse(new Error("Ya existe un viaje en esa fecha para el empleado."));
                 }
+            }
+        }
+
+        public HttpResponse<ViajeResponse> ValidarViaje(ValidacionRequest request)
+        {
+            if (request == null)
+                return newHttpErrorResponse(new Error("La request es invalida."));
+
+            using (var db = new GeviApiContext())
+            {
+                var viaje = db.Viajes
+                    .Where(v => v.Id == request.ViajeId)
+                    .Include(u => u.Empleado)
+                    .FirstOrDefault();
+
+                if (viaje != null)
+                {
+                    viaje.Estado = request.Estado;
+                    db.Entry(viaje).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    var response = new ViajeResponse()
+                    {
+                        Id = viaje.Id,
+                        EmpleadoId = viaje.Empleado.Id,
+                        Estado = request.Estado,
+                        FechaInicio = viaje.FechaInicio,
+                        FechaFin = viaje.FechaFin,
+                        Gastos = viaje.Gastos,
+                        Proyecto = viaje.Proyecto
+                    };
+                    return newHttpResponse(response);
+                }
+                return newHttpErrorResponse(new Error("No existe el viaje"));
             }
         }
 

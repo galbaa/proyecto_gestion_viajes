@@ -6,7 +6,9 @@ namespace Gevi.Api.Models
     {
         public int Id { get; set; }
         public string Estado { get; set; }
+        public string Moneda { get; set; }
         public decimal Total { get; set; }
         public DateTime Fecha { get; set; }
+        public TipoGasto Tipo { get; set; }
     }
 }

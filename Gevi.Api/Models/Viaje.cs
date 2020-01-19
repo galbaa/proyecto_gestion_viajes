@@ -6,7 +6,8 @@ namespace Gevi.Api.Models
     public enum Estado
     {
         PENDIENTE_APROBACION,
-        APROBADO
+        APROBADO,
+        RECHAZADO
     }
 
     public class Viaje

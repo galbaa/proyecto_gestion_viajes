@@ -5,12 +5,9 @@ using System.Web;
 
 namespace Gevi.Api.Models
 {
-    public class Enums
+    public class TipoGasto
     {
-        public enum Estado
-        {
-            PENDIENTE_APROBACION,
-            APROBADO
-        }
+        public int Id{ get; set; }
+        public string Nombre { get; set; }
     }
 }

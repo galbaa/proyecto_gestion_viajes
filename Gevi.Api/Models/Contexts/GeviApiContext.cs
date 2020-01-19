@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using System.Data.Entity;
 
 namespace Gevi.Api.Models
 {
@@ -20,8 +16,12 @@ namespace Gevi.Api.Models
             this.Configuration.ProxyCreationEnabled = false;
         }
 
-        public System.Data.Entity.DbSet<Gevi.Api.Models.Viaje> Viajes { get; set; }
-
-        public System.Data.Entity.DbSet<Gevi.Api.Models.Usuario> Usuarios { get; set; }
+        public DbSet<Viaje> Viajes { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Proyecto> Proyectos { get; set; }
+        public DbSet<TipoCliente> TipoClientes { get; set; }
+        //public DbSet<TipoGasto> TipoGastos { get; set; }
+        public DbSet<Gasto> Gastos { get; set; }
     }
 }

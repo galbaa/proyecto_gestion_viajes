@@ -152,7 +152,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="IndexModule.cs" />
+    <Compile Include="Middleware\ClientesManager.cs" />
     <Compile Include="Middleware\EncryptionManager.cs" />
+    <Compile Include="Middleware\Interfaces\IClientesManager.cs" />
     <Compile Include="Middleware\Interfaces\IEncryptionManager.cs" />
     <Compile Include="Middleware\Interfaces\ILoginManager.cs" />
     <Compile Include="Middleware\Interfaces\IUsuariosManager.cs" />
@@ -179,24 +181,36 @@
     <Compile Include="Migrations\202001072254198_se agrega enum Estado en clase Viaje.Designer.cs">
       <DependentUpon>202001072254198_se agrega enum Estado en clase Viaje.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202001181841124_se agrega valor RECHAZADO a enum Estado.cs" />
+    <Compile Include="Migrations\202001181841124_se agrega valor RECHAZADO a enum Estado.Designer.cs">
+      <DependentUpon>202001181841124_se agrega valor RECHAZADO a enum Estado.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001191940072_se modifica la logica de acceso a datos para algunas clases.cs" />
+    <Compile Include="Migrations\202001191940072_se modifica la logica de acceso a datos para algunas clases.Designer.cs">
+      <DependentUpon>202001191940072_se modifica la logica de acceso a datos para algunas clases.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Administrativo.cs" />
-    <Compile Include="Models\ApiResponse.cs" />
+    <Compile Include="Models\Requests\ClienteRequest.cs" />
+    <Compile Include="Models\Responses\ApiResponse.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\Empleado.cs" />
     <Compile Include="Models\Error.cs" />
     <Compile Include="Models\Gasto.cs" />
-    <Compile Include="Models\GeviApiContext.cs" />
-    <Compile Include="Models\HttpResponse.cs" />
-    <Compile Include="Models\LoginRequest.cs" />
+    <Compile Include="Models\Contexts\GeviApiContext.cs" />
+    <Compile Include="Models\Responses\ClienteResponse.cs" />
+    <Compile Include="Models\Responses\HttpResponse.cs" />
+    <Compile Include="Models\Requests\LoginRequest.cs" />
     <Compile Include="Models\Proyecto.cs" />
     <Compile Include="Models\TipoCliente.cs" />
-    <Compile Include="Models\UsuarioResponse.cs" />
+    <Compile Include="Models\Responses\UsuarioResponse.cs" />
+    <Compile Include="Models\TipoGasto.cs" />
     <Compile Include="Models\Usuario.cs" />
-    <Compile Include="Models\UsuarioRequest.cs" />
+    <Compile Include="Models\Requests\UsuarioRequest.cs" />
+    <Compile Include="Models\Requests\ValidacionRequest.cs" />
     <Compile Include="Models\Viaje.cs" />
-    <Compile Include="Models\ViajeRequest.cs" />
-    <Compile Include="Models\ViajeResponse.cs" />
+    <Compile Include="Models\Requests\ViajeRequest.cs" />
+    <Compile Include="Models\Responses\ViajeResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +238,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202001072254198_se agrega enum Estado en clase Viaje.resx">
       <DependentUpon>202001072254198_se agrega enum Estado en clase Viaje.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001181841124_se agrega valor RECHAZADO a enum Estado.resx">
+      <DependentUpon>202001181841124_se agrega valor RECHAZADO a enum Estado.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001191940072_se modifica la logica de acceso a datos para algunas clases.resx">
+      <DependentUpon>202001191940072_se modifica la logica de acceso a datos para algunas clases.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
