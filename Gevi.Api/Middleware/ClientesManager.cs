@@ -3,6 +3,8 @@ using Gevi.Api.Models;
 using Gevi.Api.Models.Requests;
 using Gevi.Api.Models.Responses;
 using Nancy;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 
@@ -20,14 +22,6 @@ namespace Gevi.Api.Middleware
                 var tipoCli = db.TipoClientes
                                 .Where(tc => tc.Nombre == request.Tipo)
                                 .FirstOrDefault();
-
-                var response = new ClienteResponse()
-                {
-                    Nombre = request.Nombre,
-                    Pais = request.Pais,
-                    Proyectos = null,
-                    Tipo = tipoCli
-                };
 
                 var nuevo = new Cliente()
                 {
@@ -47,6 +41,15 @@ namespace Gevi.Api.Middleware
                     return newHttpErrorResponse(new Error("Ya existe un cliente con ese nombre."));
                 }
 
+                var response = new ClienteResponse()
+                {
+                    Id = nuevo.Id,
+                    Nombre = nuevo.Nombre,
+                    Pais = nuevo.Pais,
+                    Proyectos = null,
+                    Tipo = tipoCli
+                };
+
                 return newHttpResponse(response);
             }
         }
@@ -60,6 +63,8 @@ namespace Gevi.Api.Middleware
             {
                 var cli = db.Clientes
                                 .Where(c => c.Nombre == request.Nombre)
+                                .Include(c => c.Proyectos)
+                                .Include(c => c.Tipo)
                                 .FirstOrDefault();
 
                 if (cli == null)
@@ -69,24 +74,187 @@ namespace Gevi.Api.Middleware
                                     .Where(p => p.Cliente.Id == cli.Id)
                                     .ToList();
 
-                foreach (var p in proyectos)
+                var response = new ClienteResponse()
                 {
-                    db.Proyectos.Remove(p);
+                    Id = cli.Id,
+                    Nombre = cli.Nombre,
+                    Pais = cli.Pais,
+                    Proyectos = null,
+                    Tipo = cli.Tipo
+                };
+
+                if (proyectos != null)
+                {
+                    var proyectosResponse = new List<ProyectoResponse>();
+
+                    foreach (var p in proyectos)
+                    {
+                        var nuevoProyResponse = new ProyectoResponse()
+                        {
+                            Id = p.Id,
+                            Nombre = p.Nombre,
+                            Cliente = cli.Nombre
+                        };
+                        proyectosResponse.Add(nuevoProyResponse);
+                        db.Proyectos.Remove(p);
+                    }
+
+                    response.Proyectos = proyectosResponse;
                 }
+
+                db.Clientes.Remove(cli);
+                db.SaveChanges();
+                
+                return newHttpResponse(response);
+            }
+        }
+        public HttpResponse<ClienteResponse> ModificarCliente(ClienteRequest request)
+        {
+            if (request == null)
+                return newHttpErrorResponse(new Error("El cliente que se intenta modificar es invalido."));
+
+            using (var db = new GeviApiContext())
+            {
+                var cli = db.Clientes
+                                .Where(c => c.Nombre.Equals(request.Nombre))
+                                .Include(c => c.Proyectos)
+                                .FirstOrDefault();
+
+                var tipo = db.TipoClientes
+                                .Where(t => t.Nombre.Equals(request.Tipo))
+                                .FirstOrDefault();
+
+                if (cli == null)
+                    return newHttpErrorResponse(new Error("No existe el cliente"));
+
+                cli.Nombre = request.Nombre;
+                cli.Pais = request.Pais;
+                cli.Tipo = tipo;
+
+                db.Entry(cli).State = EntityState.Modified;
+                db.SaveChanges();
 
                 var response = new ClienteResponse()
                 {
                     Id = cli.Id,
                     Nombre = cli.Nombre,
                     Pais = cli.Pais,
-                    Proyectos = cli.Proyectos,
+                    Tipo = cli.Tipo,
+                    Proyectos = null
+                };
+
+                if (cli.Proyectos != null)
+                {
+                    var proyectosResponse = new List<ProyectoResponse>();
+
+                    foreach (var p in cli.Proyectos)
+                    {
+                        var nuevoProyResponse = new ProyectoResponse()
+                        {
+                            Id = p.Id,
+                            Nombre = p.Nombre,
+                            Cliente = cli.Nombre
+                        };
+                        proyectosResponse.Add(nuevoProyResponse);
+                    }
+                    response.Proyectos = proyectosResponse;
+                }
+
+                return newHttpResponse(response);
+            }
+
+        }
+
+        public HttpResponse<ClienteResponse> BuscarCliente(ClienteRequest request)
+        {
+            if (request == null)
+                return newHttpErrorResponse(new Error("El cliente que se intenta buscar es invalido."));
+
+            using (var db = new GeviApiContext())
+            {
+                var cli = db.Clientes
+                                .Where(c => c.Nombre.Equals(request.Nombre))
+                                .Include(c => c.Proyectos)
+                                .FirstOrDefault();
+
+                if (cli == null)
+                    return newHttpErrorResponse(new Error("No existe el cliente"));
+
+                var response = new ClienteResponse()
+                {
+                    Id = cli.Id,
+                    Nombre = cli.Nombre,
+                    Pais = cli.Pais,
+                    Proyectos = null,
                     Tipo = cli.Tipo
                 };
 
-                    db.Clientes.Remove(cli);
-                    db.SaveChanges();
-                
+                if (cli.Proyectos != null)
+                {
+                    var proyectosResponse = new List<ProyectoResponse>();
+
+                    foreach (var p in cli.Proyectos)
+                    {
+                        var nuevoProyResponse = new ProyectoResponse()
+                        {
+                            Id = p.Id,
+                            Nombre = p.Nombre,
+                            Cliente = cli.Nombre
+                        };
+                        proyectosResponse.Add(nuevoProyResponse);
+                    }
+                    response.Proyectos = proyectosResponse;
+                }
+
                 return newHttpResponse(response);
+            }
+        }
+
+        public HttpResponse<List<ClienteResponse>> Todos()
+        {
+            using (var db = new GeviApiContext())
+            {
+                var clientes = db.Clientes
+                                    .Include(c => c.Proyectos)
+                                    .Include(c => c.Tipo)
+                                    .ToList();
+
+                var response = new List<ClienteResponse>();
+
+                foreach (var c in clientes)
+                {
+                    var nuevo = new ClienteResponse()
+                    {
+                        Id = c.Id,
+                        Nombre = c.Nombre,
+                        Pais = c.Pais,
+                        Tipo = c.Tipo,
+                        Proyectos = null
+                    };
+
+                    if (c.Proyectos != null)
+                    {
+                        var proyectoRespone = new List<ProyectoResponse>();
+
+                        foreach (var p in c.Proyectos)
+                        {
+                            var nuevoProyectoResponse = new ProyectoResponse()
+                            {
+                                Id = p.Id,
+                                Nombre = p.Nombre,
+                                Cliente = p.Cliente?.Nombre
+                            };
+
+                            proyectoRespone.Add(nuevoProyectoResponse);
+                        }
+
+                        nuevo.Proyectos = proyectoRespone;
+                    }
+
+                    response.Add(nuevo);
+                }
+
+                return newHttpListResponse(response);
             }
         }
 
@@ -96,6 +264,19 @@ namespace Gevi.Api.Middleware
             {
                 StatusCode = HttpStatusCode.OK,
                 ApiResponse = new ApiResponse<ClienteResponse>()
+                {
+                    Data = response,
+                    Error = null
+                }
+            };
+        }
+
+        private HttpResponse<List<ClienteResponse>> newHttpListResponse(List<ClienteResponse> response)
+        {
+            return new HttpResponse<List<ClienteResponse>>()
+            {
+                StatusCode = HttpStatusCode.OK,
+                ApiResponse = new ApiResponse<List<ClienteResponse>>()
                 {
                     Data = response,
                     Error = null

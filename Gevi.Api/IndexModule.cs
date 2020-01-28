@@ -57,6 +57,27 @@ namespace Gevi.Api
                     .WithModel(viajeResponse.ApiResponse);
             };
 
+            Post["viajes/historial"] = parameters =>
+            {
+                var viajeRequest = this.Bind<ViajeRequest>("estado", "fechaInicio", "fechaFin", "gastos", "proyecto");
+                var viajeResponse = viajesManager.Historial(viajeRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(viajeResponse.StatusCode)
+                    .WithModel(viajeResponse.ApiResponse);
+            };
+
+            Get["viajes/todos"] = parameters =>
+            {
+                var viajeResponse = viajesManager.Todos();
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(viajeResponse.StatusCode)
+                    .WithModel(viajeResponse.ApiResponse);
+            };
+
             Post["clientes/nuevo"] = parameters =>
             {
                 var clienteRequest = this.Bind<ClienteRequest>();
@@ -70,8 +91,29 @@ namespace Gevi.Api
 
             Delete["clientes/eliminar"] = parameters =>
             {
-                var clienteRequest = this.Bind<ClienteRequest>(cr => cr.Nombre);
+                var clienteRequest = this.Bind<ClienteRequest>("pais", "tipo");
                 var clienteResponse = clientesManager.BorrarCliente(clienteRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(clienteResponse.StatusCode)
+                    .WithModel(clienteResponse.ApiResponse);
+            };
+
+            Put["clientes/modificar"] = parameters =>
+            {
+                var clienteRequest = this.Bind<ClienteRequest>();
+                var clienteResponse = clientesManager.ModificarCliente(clienteRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(clienteResponse.StatusCode)
+                    .WithModel(clienteResponse.ApiResponse);
+            };
+
+            Get["clientes/todos"] = parameters =>
+            {
+                var clienteResponse = clientesManager.Todos();
 
                 return Negotiate
                     .WithContentType("application/json")

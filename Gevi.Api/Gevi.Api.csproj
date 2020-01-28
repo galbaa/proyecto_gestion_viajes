@@ -154,8 +154,10 @@
     <Compile Include="IndexModule.cs" />
     <Compile Include="Middleware\ClientesManager.cs" />
     <Compile Include="Middleware\EncryptionManager.cs" />
+    <Compile Include="Middleware\GastosManager.cs" />
     <Compile Include="Middleware\Interfaces\IClientesManager.cs" />
     <Compile Include="Middleware\Interfaces\IEncryptionManager.cs" />
+    <Compile Include="Middleware\Interfaces\IGastosManager.cs" />
     <Compile Include="Middleware\Interfaces\ILoginManager.cs" />
     <Compile Include="Middleware\Interfaces\IUsuariosManager.cs" />
     <Compile Include="Middleware\Interfaces\IViajesManager.cs" />
@@ -189,9 +191,14 @@
     <Compile Include="Migrations\202001191940072_se modifica la logica de acceso a datos para algunas clases.Designer.cs">
       <DependentUpon>202001191940072_se modifica la logica de acceso a datos para algunas clases.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202001270025510_se agrega el cliente en gasto.cs" />
+    <Compile Include="Migrations\202001270025510_se agrega el cliente en gasto.Designer.cs">
+      <DependentUpon>202001270025510_se agrega el cliente en gasto.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Administrativo.cs" />
     <Compile Include="Models\Requests\ClienteRequest.cs" />
+    <Compile Include="Models\Requests\GastoRequest.cs" />
     <Compile Include="Models\Responses\ApiResponse.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\Empleado.cs" />
@@ -199,9 +206,11 @@
     <Compile Include="Models\Gasto.cs" />
     <Compile Include="Models\Contexts\GeviApiContext.cs" />
     <Compile Include="Models\Responses\ClienteResponse.cs" />
+    <Compile Include="Models\Responses\GastoResponse.cs" />
     <Compile Include="Models\Responses\HttpResponse.cs" />
     <Compile Include="Models\Requests\LoginRequest.cs" />
     <Compile Include="Models\Proyecto.cs" />
+    <Compile Include="Models\Responses\ProyectoResponse.cs" />
     <Compile Include="Models\TipoCliente.cs" />
     <Compile Include="Models\Responses\UsuarioResponse.cs" />
     <Compile Include="Models\TipoGasto.cs" />
@@ -244,6 +253,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202001191940072_se modifica la logica de acceso a datos para algunas clases.resx">
       <DependentUpon>202001191940072_se modifica la logica de acceso a datos para algunas clases.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001270025510_se agrega el cliente en gasto.resx">
+      <DependentUpon>202001270025510_se agrega el cliente en gasto.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

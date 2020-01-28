@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gevi.Api.Models.Responses;
+using System;
 using System.Collections.Generic;
 
 namespace Gevi.Api.Models
@@ -10,7 +11,7 @@ namespace Gevi.Api.Models
         public DateTime FechaFin { get; set; }
         public Estado Estado { get; set; }
         public int EmpleadoId { get; set; }
-        public List<Gasto> Gastos { get; set; }
-        public Proyecto Proyecto { get; set; }
+        public List<GastoResponse> Gastos { get; set; }
+        public string Proyecto { get; set; }
     }
 }

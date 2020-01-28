@@ -48,21 +48,23 @@ namespace Gevi.Api.Middleware
                 try
                 {
                     db.Usuarios.Add(nuevo);
-                    db.SaveChangesAsync();
+                    db.SaveChanges();
                 }
                 catch (DbUpdateException)
                 {
                     return newHttpErrorResponse(new Error("Ya existe un usuario con ese email."));
                 }
 
-                return newHttpResponse(new UsuarioResponse()
+                var response = new UsuarioResponse()
                 {
-                    Id = db.Usuarios.OrderByDescending(u => u.Id).Select(u => u.Id).FirstOrDefault(),
+                    Id = nuevo.Id,
                     Email = nuevo.Email,
                     Nombre = nuevo.Nombre,
                     FechaRegistro = DateTime.Today,
                     Token = null
-                });
+                };
+
+                return newHttpResponse(response);
             }
         }
 
