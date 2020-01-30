@@ -3,6 +3,9 @@ using Gevi.Api.Models;
 using Nancy.ModelBinding;
 using Gevi.Api.Middleware.Interfaces;
 using Gevi.Api.Models.Requests;
+using Nancy.Authentication.Token;
+using Nancy.Security;
+using Nancy.Responses;
 
 namespace Gevi.Api
 {
@@ -11,12 +14,19 @@ namespace Gevi.Api
         public IndexModule(ILoginManager loginManager,
             IUsuariosManager usuariosManager,
             IViajesManager viajesManager,
-            IClientesManager clientesManager)
+            IClientesManager clientesManager,
+            IProyectosManager proyectosManager,
+            ITokenizer tokenizer)
         {
+            //this.RequiresAuthentication();
+            
             Post["login/standard"] = parameters =>
             {
                 var loginRequest = this.Bind<LoginRequest>();
                 var loginResponse = loginManager.Login(loginRequest.Username, loginRequest.Password);
+
+                var token = tokenizer.Tokenize(new UsuarioIdentity(), Context);
+                loginResponse.ApiResponse.Data.Token = token;
 
                 return Negotiate
                     .WithContentType("application/json")
@@ -119,6 +129,49 @@ namespace Gevi.Api
                     .WithContentType("application/json")
                     .WithStatusCode(clienteResponse.StatusCode)
                     .WithModel(clienteResponse.ApiResponse);
+            };
+
+            Post["proyectos/nuevo"] = parameters =>
+            {
+                var proyectoRequest = this.Bind<ProyectoRequest>();
+                var proyectoResponse = proyectosManager.NuevoProyecto(proyectoRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(proyectoResponse.StatusCode)
+                    .WithModel(proyectoResponse.ApiResponse);
+            };
+
+            Delete["proyectos/eliminar"] = parameters =>
+            {
+                var proyectoRequest = this.Bind<ProyectoRequest>("clienteNombre");
+                var proyectoResponse = proyectosManager.BorrarProyecto(proyectoRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(proyectoResponse.StatusCode)
+                    .WithModel(proyectoResponse.ApiResponse);
+            };
+
+            Put["proyectos/modificar"] = parameters =>
+            {
+                var proyectoRequest = this.Bind<ProyectoRequest>();
+                var proyectoResponse = proyectosManager.ModificarProyecto(proyectoRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(proyectoResponse.StatusCode)
+                    .WithModel(proyectoResponse.ApiResponse);
+            };
+
+            Get["proyectos/todos"] = parameters =>
+            {
+                var proyectoResponse = proyectosManager.Todos();
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(proyectoResponse.StatusCode)
+                    .WithModel(proyectoResponse.ApiResponse);
             };
         }
     }

@@ -100,6 +100,9 @@
     <Reference Include="Nancy, Version=1.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.1.4.2\lib\net40\Nancy.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.Authentication.Token, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Authentication.Token.1.4.1\lib\net40\Nancy.Authentication.Token.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy.Hosting.Aspnet, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Hosting.Aspnet.1.4.1\lib\net40\Nancy.Hosting.Aspnet.dll</HintPath>
     </Reference>
@@ -159,8 +162,10 @@
     <Compile Include="Middleware\Interfaces\IEncryptionManager.cs" />
     <Compile Include="Middleware\Interfaces\IGastosManager.cs" />
     <Compile Include="Middleware\Interfaces\ILoginManager.cs" />
+    <Compile Include="Middleware\Interfaces\IProyectosManager.cs" />
     <Compile Include="Middleware\Interfaces\IUsuariosManager.cs" />
     <Compile Include="Middleware\Interfaces\IViajesManager.cs" />
+    <Compile Include="Middleware\ProyectosManager.cs" />
     <Compile Include="Middleware\UsuariosManager.cs" />
     <Compile Include="Middleware\LoginManager.cs" />
     <Compile Include="Middleware\TokenGeneration\TokenGenerator.cs" />
@@ -195,10 +200,15 @@
     <Compile Include="Migrations\202001270025510_se agrega el cliente en gasto.Designer.cs">
       <DependentUpon>202001270025510_se agrega el cliente en gasto.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202001301545406_se agrega index unique a nombre de proyecto.cs" />
+    <Compile Include="Migrations\202001301545406_se agrega index unique a nombre de proyecto.Designer.cs">
+      <DependentUpon>202001301545406_se agrega index unique a nombre de proyecto.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Administrativo.cs" />
     <Compile Include="Models\Requests\ClienteRequest.cs" />
     <Compile Include="Models\Requests\GastoRequest.cs" />
+    <Compile Include="Models\Requests\ProyectoRequest.cs" />
     <Compile Include="Models\Responses\ApiResponse.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\Empleado.cs" />
@@ -217,6 +227,7 @@
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\Requests\UsuarioRequest.cs" />
     <Compile Include="Models\Requests\ValidacionRequest.cs" />
+    <Compile Include="Models\UsuarioIdentity.cs" />
     <Compile Include="Models\Viaje.cs" />
     <Compile Include="Models\Requests\ViajeRequest.cs" />
     <Compile Include="Models\Responses\ViajeResponse.cs" />
@@ -256,6 +267,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202001270025510_se agrega el cliente en gasto.resx">
       <DependentUpon>202001270025510_se agrega el cliente en gasto.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001301545406_se agrega index unique a nombre de proyecto.resx">
+      <DependentUpon>202001301545406_se agrega index unique a nombre de proyecto.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
