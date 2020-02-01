@@ -60,8 +60,7 @@ namespace Gevi.Api.Middleware
                     Id = nuevo.Id,
                     Email = nuevo.Email,
                     Nombre = nuevo.Nombre,
-                    FechaRegistro = DateTime.Today,
-                    Token = null
+                    FechaRegistro = DateTime.Today
                 };
 
                 return newHttpResponse(response);
