@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+﻿using System.Linq;
 using Gevi.Api.Middleware.Interfaces;
-using Gevi.Api.Middleware.TokenGeneration;
 using Gevi.Api.Models;
 using Nancy;
 
@@ -24,14 +19,12 @@ namespace Gevi.Api.Middleware
 
                 if(user != null)
                 {
-                    var token = TokenGenerator.GenerateTokenJwt(username);
                     return newHttpResponse(new UsuarioResponse()
                     {
                         Id = user.Id,
                         Email = user.Email,
                         FechaRegistro = user.FechaRegistro,
-                        Nombre = user.Nombre,
-                        Token = token
+                        Nombre = user.Nombre
                     });
                 }
                 else

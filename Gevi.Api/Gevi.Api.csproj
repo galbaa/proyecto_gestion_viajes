@@ -155,12 +155,16 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="IndexModule.cs" />
+    <Compile Include="Middleware\Authorization\AccessAuthorizer.cs" />
+    <Compile Include="Middleware\Authorization\HeaderParser.cs" />
     <Compile Include="Middleware\ClientesManager.cs" />
     <Compile Include="Middleware\EncryptionManager.cs" />
     <Compile Include="Middleware\GastosManager.cs" />
+    <Compile Include="Middleware\Interfaces\IAccessAuthorizer.cs" />
     <Compile Include="Middleware\Interfaces\IClientesManager.cs" />
     <Compile Include="Middleware\Interfaces\IEncryptionManager.cs" />
     <Compile Include="Middleware\Interfaces\IGastosManager.cs" />
+    <Compile Include="Middleware\Interfaces\IHeaderParser.cs" />
     <Compile Include="Middleware\Interfaces\ILoginManager.cs" />
     <Compile Include="Middleware\Interfaces\IProyectosManager.cs" />
     <Compile Include="Middleware\Interfaces\IUsuariosManager.cs" />

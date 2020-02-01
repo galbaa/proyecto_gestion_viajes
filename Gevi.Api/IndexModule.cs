@@ -11,22 +11,19 @@ namespace Gevi.Api
 {
     public class IndexModule : NancyModule
     {
-        public IndexModule(ILoginManager loginManager,
+        public IndexModule(IAccessAuthorizer accessAuthorizer,
+            ILoginManager loginManager,
             IUsuariosManager usuariosManager,
             IViajesManager viajesManager,
             IClientesManager clientesManager,
-            IProyectosManager proyectosManager,
-            ITokenizer tokenizer)
+            IProyectosManager proyectosManager)
         {
-            //this.RequiresAuthentication();
+            Before += accessAuthorizer.Authorized;
             
             Post["login/standard"] = parameters =>
             {
                 var loginRequest = this.Bind<LoginRequest>();
                 var loginResponse = loginManager.Login(loginRequest.Username, loginRequest.Password);
-
-                var token = tokenizer.Tokenize(new UsuarioIdentity(), Context);
-                loginResponse.ApiResponse.Data.Token = token;
 
                 return Negotiate
                     .WithContentType("application/json")
