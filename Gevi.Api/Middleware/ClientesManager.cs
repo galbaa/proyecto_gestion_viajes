@@ -26,7 +26,6 @@ namespace Gevi.Api.Middleware
                 var nuevo = new Cliente()
                 {
                     Nombre = request.Nombre,
-                    Pais = request.Pais,
                     Proyectos = null,
                     Tipo = tipoCli
                 };
@@ -45,7 +44,6 @@ namespace Gevi.Api.Middleware
                 {
                     Id = nuevo.Id,
                     Nombre = nuevo.Nombre,
-                    Pais = nuevo.Pais,
                     Proyectos = null,
                     Tipo = tipoCli
                 };
@@ -78,7 +76,6 @@ namespace Gevi.Api.Middleware
                 {
                     Id = cli.Id,
                     Nombre = cli.Nombre,
-                    Pais = cli.Pais,
                     Proyectos = null,
                     Tipo = cli.Tipo
                 };
@@ -128,7 +125,6 @@ namespace Gevi.Api.Middleware
                     return newHttpErrorResponse(new Error("No existe el cliente"));
 
                 cli.Nombre = request.Nombre;
-                cli.Pais = request.Pais;
                 cli.Tipo = tipo;
 
                 db.Entry(cli).State = EntityState.Modified;
@@ -138,7 +134,6 @@ namespace Gevi.Api.Middleware
                 {
                     Id = cli.Id,
                     Nombre = cli.Nombre,
-                    Pais = cli.Pais,
                     Tipo = cli.Tipo,
                     Proyectos = null
                 };
@@ -184,7 +179,6 @@ namespace Gevi.Api.Middleware
                 {
                     Id = cli.Id,
                     Nombre = cli.Nombre,
-                    Pais = cli.Pais,
                     Proyectos = null,
                     Tipo = cli.Tipo
                 };
@@ -227,7 +221,6 @@ namespace Gevi.Api.Middleware
                     {
                         Id = c.Id,
                         Nombre = c.Nombre,
-                        Pais = c.Pais,
                         Tipo = c.Tipo,
                         Proyectos = null
                     };

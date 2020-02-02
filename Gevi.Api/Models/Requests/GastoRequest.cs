@@ -7,7 +7,8 @@ namespace Gevi.Api.Models.Requests
 {
     public class GastoRequest
     {
-        public string Estado { get; set; }
+        public int Id { get; set; }
+        public Estado Estado { get; set; }
         public string Moneda { get; set; }
         public decimal Total { get; set; }
         public DateTime Fecha { get; set; }

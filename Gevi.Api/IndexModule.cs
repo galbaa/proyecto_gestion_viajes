@@ -16,7 +16,8 @@ namespace Gevi.Api
             IUsuariosManager usuariosManager,
             IViajesManager viajesManager,
             IClientesManager clientesManager,
-            IProyectosManager proyectosManager)
+            IProyectosManager proyectosManager,
+            IGastosManager gastosManager)
         {
             Before += accessAuthorizer.Authorized;
             
@@ -169,6 +170,28 @@ namespace Gevi.Api
                     .WithContentType("application/json")
                     .WithStatusCode(proyectoResponse.StatusCode)
                     .WithModel(proyectoResponse.ApiResponse);
+            };
+
+            Post["gastos/nuevo"] = parameters =>
+            {
+                var gastoRequest = this.Bind<GastoRequest>();
+                var gastoResponse = gastosManager.NuevoGasto(gastoRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(gastoResponse.StatusCode)
+                    .WithModel(gastoResponse.ApiResponse);
+            };
+
+            Put["gastos/validar"] = parameters =>
+            {
+                var validacionRequest = this.Bind<ValidacionRequest>();
+                var gastoResponse = gastosManager.ValidarGasto(validacionRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(gastoResponse.StatusCode)
+                    .WithModel(gastoResponse.ApiResponse);
             };
         }
     }

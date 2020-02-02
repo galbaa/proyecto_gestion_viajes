@@ -204,6 +204,10 @@
     <Compile Include="Migrations\202001301545406_se agrega index unique a nombre de proyecto.Designer.cs">
       <DependentUpon>202001301545406_se agrega index unique a nombre de proyecto.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.cs" />
+    <Compile Include="Migrations\202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.Designer.cs">
+      <DependentUpon>202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Administrativo.cs" />
     <Compile Include="Models\Requests\ClienteRequest.cs" />
@@ -270,6 +274,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202001301545406_se agrega index unique a nombre de proyecto.resx">
       <DependentUpon>202001301545406_se agrega index unique a nombre de proyecto.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.resx">
+      <DependentUpon>202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

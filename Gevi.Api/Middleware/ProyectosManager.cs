@@ -30,7 +30,8 @@ namespace Gevi.Api.Middleware
                     var nuevo = new Proyecto()
                     {
                         Nombre = request.Nombre,
-                        Cliente = cli
+                        Cliente = cli,
+                        FechaInicio = request.FechaInicio
                     };
 
                     try
@@ -47,6 +48,7 @@ namespace Gevi.Api.Middleware
                     {
                         Id = nuevo.Id,
                         Nombre = nuevo.Nombre,
+                        FechaInicio = nuevo.FechaInicio,
                         Cliente = nuevo.Cliente?.Nombre
                     };
 
@@ -76,6 +78,7 @@ namespace Gevi.Api.Middleware
                 {
                     Id = pro.Id,
                     Nombre = pro.Nombre,
+                    FechaInicio = pro.FechaInicio,
                     Cliente = pro.Cliente?.Nombre
                 };
 
@@ -108,6 +111,7 @@ namespace Gevi.Api.Middleware
                                 .FirstOrDefault();
 
                 pro.Nombre = request.Nombre;
+                pro.FechaInicio = request.FechaInicio;
                 pro.Cliente = cli;
 
                 db.Entry(pro).State = EntityState.Modified;
@@ -117,6 +121,7 @@ namespace Gevi.Api.Middleware
                 {
                     Id = pro.Id,
                     Nombre = pro.Nombre,
+                    FechaInicio = pro.FechaInicio,
                     Cliente = pro.Cliente?.Nombre
                 };
 
@@ -140,6 +145,7 @@ namespace Gevi.Api.Middleware
                     {
                         Id = p.Id,
                         Nombre = p.Nombre,
+                        FechaInicio = p.FechaInicio,
                         Cliente = p.Cliente?.Nombre
                     };
 

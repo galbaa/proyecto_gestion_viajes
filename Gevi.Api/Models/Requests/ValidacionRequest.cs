@@ -2,7 +2,7 @@
 {
     public class ValidacionRequest
     {
-        public int ViajeId { get; set; }
+        public int Id { get; set; }
         public Estado Estado { get; set; }
     }
 }

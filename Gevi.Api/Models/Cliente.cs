@@ -11,7 +11,6 @@ namespace Gevi.Api.Models
         [Column(TypeName = "VARCHAR")]
         [Index(IsUnique = true)]
         public string Nombre { get; set; }
-        public string Pais { get; set; }
         public List<Proyecto> Proyectos { get; set; }
         public TipoCliente Tipo { get; set; }
     }

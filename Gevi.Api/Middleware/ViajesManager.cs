@@ -85,7 +85,7 @@ namespace Gevi.Api.Middleware
             using (var db = new GeviApiContext())
             {
                 var viaje = db.Viajes
-                    .Where(v => v.Id == request.ViajeId)
+                    .Where(v => v.Id == request.Id)
                     .Include(u => u.Empleado)
                     .Include(w => w.Proyecto)
                     .FirstOrDefault();
@@ -148,47 +148,50 @@ namespace Gevi.Api.Middleware
                                     .ToList()
                                     .FirstOrDefault();
 
-                var viajes = empleado.Viajes;
+                var viajes = empleado?.Viajes;
 
                 var response = new List<ViajeResponse>();
 
-                foreach (var v in viajes)
+                if (viajes != null)
                 {
-                    var nuevo = new ViajeResponse()
+                    foreach (var v in viajes)
                     {
-                        Id = v.Id,
-                        EmpleadoId = request.EmpleadoId,
-                        Estado = v.Estado,
-                        FechaFin = v.FechaFin,
-                        FechaInicio = v.FechaInicio,
-                        Gastos = null,
-                        Proyecto = v.Proyecto.Nombre
-                    };
-
-                    if (v.Gastos != null)
-                    {
-                        var gastosRespone = new List<GastoResponse>();
-
-                        foreach (var g in v.Gastos)
+                        var nuevo = new ViajeResponse()
                         {
-                            var nuevoGastoResponse = new GastoResponse()
-                            {
-                                Id = g.Id,
-                                Estado = g.Estado,
-                                Fecha = g.Fecha,
-                                Moneda = g.Moneda,
-                                Tipo = g.Tipo,
-                                ViajeId = g.Viaje.Id,
-                                Total = g.Total
-                            };
+                            Id = v.Id,
+                            EmpleadoId = request.EmpleadoId,
+                            Estado = v.Estado,
+                            FechaFin = v.FechaFin,
+                            FechaInicio = v.FechaInicio,
+                            Gastos = null,
+                            Proyecto = v.Proyecto?.Nombre
+                        };
 
-                            gastosRespone.Add(nuevoGastoResponse);
+                        if (v.Gastos != null)
+                        {
+                            var gastosRespone = new List<GastoResponse>();
+
+                            foreach (var g in v.Gastos)
+                            {
+                                var nuevoGastoResponse = new GastoResponse()
+                                {
+                                    Id = g.Id,
+                                    Estado = g.Estado,
+                                    Fecha = g.Fecha,
+                                    Moneda = g.Moneda,
+                                    Tipo = g.Tipo,
+                                    ViajeId = g.Viaje.Id,
+                                    Total = g.Total
+                                };
+
+                                gastosRespone.Add(nuevoGastoResponse);
+                            }
+
+                            nuevo.Gastos = gastosRespone;
                         }
 
-                        nuevo.Gastos = gastosRespone;
+                        response.Add(nuevo);
                     }
-
-                    response.Add(nuevo);
                 }
 
                 return newHttpListResponse(response);

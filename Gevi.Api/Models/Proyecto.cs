@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gevi.Api.Models
@@ -10,6 +11,7 @@ namespace Gevi.Api.Models
         [Column(TypeName = "VARCHAR")]
         [Index(IsUnique = true)]
         public string Nombre { get; set; }
+        public DateTime FechaInicio { get; set; }
         public Cliente Cliente { get; set; }
 
         public Proyecto()
