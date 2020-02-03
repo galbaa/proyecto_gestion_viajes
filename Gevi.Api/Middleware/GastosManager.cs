@@ -19,12 +19,26 @@ namespace Gevi.Api.Middleware
 
             using (var db = new GeviApiContext())
             {
+                var empleado = db.Usuarios
+                                    .OfType<Empleado>()
+                                    .Where(u => u is Empleado && u.Email.Equals(request.EmpleadoEmail))
+                                    .Include(u => u.Viajes.Select(g => g.Gastos))
+                                    .Include(u => u.Viajes.Select(p => p.Proyecto))
+                                    .ToList()
+                                    .FirstOrDefault();
+
+                var viaje = db.Viajes
+                                .Where(v => v.Id == request.ViajeId)
+                                .FirstOrDefault();
+
                 var nuevo = new Gasto()
                 {
                     Estado = request.Estado,
                     Fecha = request.Fecha,
                     Moneda = request.Moneda,
                     Tipo = request.Tipo,
+                    Empleado = empleado,
+                    Viaje = viaje,
                     Total = request.Total
                 };
 
@@ -45,13 +59,14 @@ namespace Gevi.Api.Middleware
                     Fecha = nuevo.Fecha,
                     Moneda = nuevo.Moneda,
                     Tipo = nuevo.Tipo,
+                    ViajeId = nuevo.Viaje == null ? 0 : nuevo.Viaje.Id,
+                    EmpleadoNombre = nuevo.Empleado?.Nombre,
                     Total = nuevo.Total
                 };
 
                 return newHttpResponse(response);
             }
         }
-
         public HttpResponse<GastoResponse> ValidarGasto(ValidacionRequest request)
         {
             if (request == null)
@@ -94,7 +109,10 @@ namespace Gevi.Api.Middleware
             {
                 var gastosPendientes = db.Gastos
                                             .Where(g => g.Estado == Estado.PENDIENTE_APROBACION)
+                                            .Include(g => g.Viaje)
+                                            .Include(g => g.Tipo)
                                             .ToList();
+
                 var response = new List<GastoResponse>();
 
                 foreach (var g in gastosPendientes)
@@ -129,7 +147,6 @@ namespace Gevi.Api.Middleware
                 }
             };
         }
-
         private HttpResponse<GastoResponse> newHttpErrorResponse(Error error)
         {
             return new HttpResponse<GastoResponse>()
@@ -142,7 +159,6 @@ namespace Gevi.Api.Middleware
                 }
             };
         }
-
         private HttpResponse<List<GastoResponse>> newHttpListResponse(List<GastoResponse> response)
         {
             return new HttpResponse<List<GastoResponse>>()

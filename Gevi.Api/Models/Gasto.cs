@@ -10,6 +10,7 @@ namespace Gevi.Api.Models
         public decimal Total { get; set; }
         public DateTime Fecha { get; set; }
         public Viaje Viaje { get; set; }
+        public Empleado Empleado { get; set; }
         public TipoGasto Tipo { get; set; }
     }
 }

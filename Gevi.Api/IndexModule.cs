@@ -193,6 +193,16 @@ namespace Gevi.Api
                     .WithStatusCode(gastoResponse.StatusCode)
                     .WithModel(gastoResponse.ApiResponse);
             };
+
+            Get["gastos/pendientes"] = parameters =>
+            {
+                var gastoResponse = gastosManager.Pendientes();
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(gastoResponse.StatusCode)
+                    .WithModel(gastoResponse.ApiResponse);
+            };
         }
     }
 }

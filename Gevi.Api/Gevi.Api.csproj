@@ -208,6 +208,10 @@
     <Compile Include="Migrations\202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.Designer.cs">
       <DependentUpon>202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202002031624492_se agrega empleado al gasto.cs" />
+    <Compile Include="Migrations\202002031624492_se agrega empleado al gasto.Designer.cs">
+      <DependentUpon>202002031624492_se agrega empleado al gasto.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Administrativo.cs" />
     <Compile Include="Models\Requests\ClienteRequest.cs" />
@@ -277,6 +281,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.resx">
       <DependentUpon>202002022206518_se agrega fechainicio a proyecto. se quita pais a cliente.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002031624492_se agrega empleado al gasto.resx">
+      <DependentUpon>202002031624492_se agrega empleado al gasto.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

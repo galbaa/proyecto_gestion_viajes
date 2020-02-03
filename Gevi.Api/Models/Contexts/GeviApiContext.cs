@@ -21,7 +21,7 @@ namespace Gevi.Api.Models
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Proyecto> Proyectos { get; set; }
         public DbSet<TipoCliente> TipoClientes { get; set; }
-        //public DbSet<TipoGasto> TipoGastos { get; set; }
+        public DbSet<TipoGasto> TipoGastos { get; set; }
         public DbSet<Gasto> Gastos { get; set; }
     }
 }

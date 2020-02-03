@@ -12,6 +12,8 @@ namespace Gevi.Api.Models.Requests
         public string Moneda { get; set; }
         public decimal Total { get; set; }
         public DateTime Fecha { get; set; }
+        public int ViajeId { get; set; }
+        public string EmpleadoEmail { get; set; }
         public TipoGasto Tipo { get; set; }
     }
 }

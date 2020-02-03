@@ -10,5 +10,6 @@ namespace Gevi.Api.Middleware.Interfaces
         HttpResponse<GastoResponse> NuevoGasto(GastoRequest request);
         HttpResponse<GastoResponse> ValidarGasto(ValidacionRequest request);
         HttpResponse<List<GastoResponse>> Pendientes();
+
     }
 }
