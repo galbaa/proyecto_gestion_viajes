@@ -76,6 +76,17 @@ namespace Gevi.Api
                     .WithModel(viajeResponse.ApiResponse);
             };
 
+            Post["viajes/entrefechas"] = parameters =>
+            {
+                var viajeRequest = this.Bind<ViajeRequest>("estado", "empleadoId", "gastos", "proyectoId");
+                var viajeResponse = viajesManager.EntreFechas(viajeRequest.FechaInicio, viajeRequest.FechaFin);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(viajeResponse.StatusCode)
+                    .WithModel(viajeResponse.ApiResponse);
+            };
+
             Get["viajes/todos"] = parameters =>
             {
                 var viajeResponse = viajesManager.Todos();
@@ -174,7 +185,7 @@ namespace Gevi.Api
 
             Post["gastos/nuevo"] = parameters =>
             {
-                var gastoRequest = this.Bind<GastoRequest>();
+                var gastoRequest = this.Bind<GastoRequest>("estado");
                 var gastoResponse = gastosManager.NuevoGasto(gastoRequest);
 
                 return Negotiate

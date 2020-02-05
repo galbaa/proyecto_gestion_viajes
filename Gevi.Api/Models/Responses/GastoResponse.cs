@@ -14,6 +14,6 @@ namespace Gevi.Api.Models.Responses
         public DateTime Fecha { get; set; }
         public int ViajeId { get; set; }
         public string EmpleadoNombre { get; set; }
-        public TipoGasto Tipo { get; set; }
+        public string Tipo { get; set; }
     }
 }

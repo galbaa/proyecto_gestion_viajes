@@ -13,7 +13,7 @@ namespace Gevi.Api.Models.Requests
         public decimal Total { get; set; }
         public DateTime Fecha { get; set; }
         public int ViajeId { get; set; }
-        public string EmpleadoEmail { get; set; }
-        public TipoGasto Tipo { get; set; }
+        public int EmpleadoId { get; set; }
+        public string Tipo { get; set; }
     }
 }

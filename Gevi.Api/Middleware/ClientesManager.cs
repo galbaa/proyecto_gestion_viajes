@@ -61,7 +61,7 @@ namespace Gevi.Api.Middleware
             {
                 var cli = db.Clientes
                                 .Where(c => c.Nombre == request.Nombre)
-                                .Include(c => c.Proyectos)
+                                .Include(c => c.Proyectos.Select(p => p.Cliente))
                                 .Include(c => c.Tipo)
                                 .FirstOrDefault();
 
@@ -70,6 +70,7 @@ namespace Gevi.Api.Middleware
 
                 var proyectos = db.Proyectos
                                     .Where(p => p.Cliente.Id == cli.Id)
+                                    .Include(p => p.Cliente)
                                     .ToList();
 
                 var response = new ClienteResponse()
@@ -90,10 +91,25 @@ namespace Gevi.Api.Middleware
                         {
                             Id = p.Id,
                             Nombre = p.Nombre,
-                            Cliente = cli.Nombre
+                            Cliente = cli?.Nombre
                         };
                         proyectosResponse.Add(nuevoProyResponse);
+
+                        var viajes = db.Viajes
+                            .Where(v => v.Proyecto.Id == p.Id)
+                            .Include(v => v.Proyecto)
+                            .ToList();
+
+                        if (viajes != null)
+                        {
+                            foreach (var v in viajes)
+                            {
+                                db.Viajes.Remove(v);
+                                db.SaveChanges();
+                            }
+                        }
                         db.Proyectos.Remove(p);
+                        db.SaveChanges();
                     }
 
                     response.Proyectos = proyectosResponse;

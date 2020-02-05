@@ -25,6 +25,7 @@ namespace Gevi.Api.Middleware
                                 .Include(c => c.Proyectos)
                                 .Include(c => c.Tipo)
                                 .FirstOrDefault();
+
                 if (cli != null)
                 {
                     var nuevo = new Proyecto()
@@ -58,7 +59,6 @@ namespace Gevi.Api.Middleware
                 return newHttpErrorResponse(new Error("No existe el cliente."));
             }
         }
-
         public HttpResponse<ProyectoResponse> BorrarProyecto(ProyectoRequest request)
         {
             if (request == null)
@@ -88,7 +88,6 @@ namespace Gevi.Api.Middleware
                 return newHttpResponse(response);
             }
         }
-
         public HttpResponse<ProyectoResponse> ModificarProyecto(ProyectoRequest request)
         {
             if (request == null)
@@ -109,26 +108,29 @@ namespace Gevi.Api.Middleware
                                 .Include(c => c.Proyectos)
                                 .Include(c => c.Tipo)
                                 .FirstOrDefault();
-
-                pro.Nombre = request.Nombre;
-                pro.FechaInicio = request.FechaInicio;
-                pro.Cliente = cli;
-
-                db.Entry(pro).State = EntityState.Modified;
-                db.SaveChanges();
-
-                var response = new ProyectoResponse()
+                if (cli != null)
                 {
-                    Id = pro.Id,
-                    Nombre = pro.Nombre,
-                    FechaInicio = pro.FechaInicio,
-                    Cliente = pro.Cliente?.Nombre
-                };
+                    pro.Nombre = request.Nombre;
+                    pro.FechaInicio = request.FechaInicio;
+                    pro.Cliente = cli;
 
-                return newHttpResponse(response);
+                    db.Entry(pro).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    var response = new ProyectoResponse()
+                    {
+                        Id = pro.Id,
+                        Nombre = pro.Nombre,
+                        FechaInicio = pro.FechaInicio,
+                        Cliente = pro.Cliente?.Nombre
+                    };
+
+                    return newHttpResponse(response);
+                }
+
+                return newHttpErrorResponse(new Error("No existe el cliente"));
             }
         }
-
         public HttpResponse<List<ProyectoResponse>> Todos()
         {
             using (var db = new GeviApiContext())

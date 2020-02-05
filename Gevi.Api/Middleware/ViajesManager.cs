@@ -19,12 +19,15 @@ namespace Gevi.Api.Middleware
 
             using (var db = new GeviApiContext())
             {
-                var empleado = (Empleado)db.Usuarios
+                var empleado = db.Usuarios
+                                    .OfType<Empleado>()
                                     .Where(u => u is Empleado && u.Id == request.EmpleadoId)
+                                    .Include(u => u.Viajes)
                                     .FirstOrDefault();
 
                 var proyecto = db.Proyectos
-                                    .Where(p => p.Nombre.Equals(request.Proyecto))
+                                    .Where(p => p.Id == request.ProyectoId)
+                                    .Include(p => p.Cliente)
                                     .FirstOrDefault();
 
                 if (empleado != null && proyecto != null && esValido(request, db, empleado) )
@@ -104,7 +107,7 @@ namespace Gevi.Api.Middleware
                         FechaInicio = viaje.FechaInicio,
                         FechaFin = viaje.FechaFin,
                         Gastos = null,
-                        Proyecto = viaje.Proyecto.Nombre
+                        Proyecto = viaje.Proyecto?.Nombre
                     };
 
                     if (viaje.Gastos != null)
@@ -119,7 +122,7 @@ namespace Gevi.Api.Middleware
                                 Estado = g.Estado,
                                 Fecha = g.Fecha,
                                 Moneda = g.Moneda,
-                                Tipo = g.Tipo,
+                                Tipo = g.Tipo?.Nombre,
                                 Total = g.Total,
                                 ViajeId = viaje.Id
                             };
@@ -143,58 +146,61 @@ namespace Gevi.Api.Middleware
                 var empleado = db.Usuarios
                                     .OfType<Empleado>()
                                     .Where(u => u is Empleado && u.Id == request.EmpleadoId)
-                                    .Include(v => v.Viajes.Select(g => g.Gastos))
-                                    .Include(v => v.Viajes.Select(p => p.Proyecto))
-                                    .ToList()
+                                    .Include(u => u.Viajes)
                                     .FirstOrDefault();
 
-                var viajes = empleado?.Viajes;
-
-                var response = new List<ViajeResponse>();
-
-                if (viajes != null)
+                if (empleado != null)
                 {
-                    foreach (var v in viajes)
+
+                    var viajes = empleado?.Viajes;
+
+                    var response = new List<ViajeResponse>();
+
+                    if (viajes != null)
                     {
-                        var nuevo = new ViajeResponse()
+                        foreach (var v in viajes)
                         {
-                            Id = v.Id,
-                            EmpleadoId = request.EmpleadoId,
-                            Estado = v.Estado,
-                            FechaFin = v.FechaFin,
-                            FechaInicio = v.FechaInicio,
-                            Gastos = null,
-                            Proyecto = v.Proyecto?.Nombre
-                        };
-
-                        if (v.Gastos != null)
-                        {
-                            var gastosRespone = new List<GastoResponse>();
-
-                            foreach (var g in v.Gastos)
+                            var nuevo = new ViajeResponse()
                             {
-                                var nuevoGastoResponse = new GastoResponse()
-                                {
-                                    Id = g.Id,
-                                    Estado = g.Estado,
-                                    Fecha = g.Fecha,
-                                    Moneda = g.Moneda,
-                                    Tipo = g.Tipo,
-                                    ViajeId = g.Viaje.Id,
-                                    Total = g.Total
-                                };
+                                Id = v.Id,
+                                EmpleadoId = request.EmpleadoId,
+                                Estado = v.Estado,
+                                FechaFin = v.FechaFin,
+                                FechaInicio = v.FechaInicio,
+                                Gastos = null,
+                                Proyecto = v.Proyecto?.Nombre
+                            };
 
-                                gastosRespone.Add(nuevoGastoResponse);
+                            if (v.Gastos != null)
+                            {
+                                var gastosRespone = new List<GastoResponse>();
+
+                                foreach (var g in v.Gastos)
+                                {
+                                    var nuevoGastoResponse = new GastoResponse()
+                                    {
+                                        Id = g.Id,
+                                        Estado = g.Estado,
+                                        Fecha = g.Fecha,
+                                        Moneda = g.Moneda,
+                                        Tipo = g.Tipo?.Nombre,
+                                        ViajeId = g.Viaje.Id,
+                                        Total = g.Total
+                                    };
+
+                                    gastosRespone.Add(nuevoGastoResponse);
+                                }
+
+                                nuevo.Gastos = gastosRespone;
                             }
 
-                            nuevo.Gastos = gastosRespone;
+                            response.Add(nuevo);
                         }
-
-                        response.Add(nuevo);
                     }
+                    return newHttpListResponse(response);
                 }
 
-                return newHttpListResponse(response);
+                return newHttpErrorListResponse(new Error("No existe el empleado"));
             }
         }
 
@@ -235,7 +241,101 @@ namespace Gevi.Api.Middleware
                                 Estado = g.Estado,
                                 Fecha = g.Fecha,
                                 Moneda = g.Moneda,
-                                Tipo = g.Tipo,
+                                Tipo = g.Tipo?.Nombre,
+                                ViajeId = g.Viaje.Id,
+                                Total = g.Total
+                            };
+
+                            gastosRespone.Add(nuevoGastoResponse);
+                        }
+
+                        nuevo.Gastos = gastosRespone;
+                    }
+
+                    response.Add(nuevo);
+                }
+
+                return newHttpListResponse(response);
+            }
+        }
+
+        public HttpResponse<List<ViajeResponse>> EntreFechas(DateTime inicio, DateTime fin)
+        {
+            using (var db = new GeviApiContext())
+            {
+                var viajes = new List<Viaje>();
+
+                if (inicio.Equals(DateTime.MinValue) && fin.Equals(DateTime.MinValue)) // inicio y fin son vacios
+                {
+                    viajes = db.Viajes
+                                    .Include(v => v.Empleado)
+                                    .Include(v => v.Gastos)
+                                    .Include(v => v.Proyecto)
+                                    .ToList();
+                }
+                else
+                {
+                    if (inicio.Equals(DateTime.MinValue)) // inicio es vacio
+                    {
+                        viajes = db.Viajes
+                                        .Where(v => v.FechaFin <= fin)
+                                        .Include(v => v.Empleado)
+                                        .Include(v => v.Gastos)
+                                        .Include(v => v.Proyecto)
+                                        .ToList();
+                    }
+                    else
+                    {
+                        if (fin.Equals(DateTime.MinValue)) // fin es vacio
+                        {
+                            viajes = db.Viajes
+                                        .Where(v => v.FechaInicio >= inicio)
+                                        .Include(v => v.Empleado)
+                                        .Include(v => v.Gastos)
+                                        .Include(v => v.Proyecto)
+                                        .ToList();
+                        }
+                        else
+                        {
+                            // inicio y fin tienen valor
+                            viajes = db.Viajes
+                                            .Where(v => v.FechaInicio >= inicio && v.FechaFin <= fin)
+                                            .Include(v => v.Empleado)
+                                            .Include(v => v.Gastos)
+                                            .Include(v => v.Proyecto)
+                                            .ToList();
+                        }
+                    }
+                }
+
+                var response = new List<ViajeResponse>();
+
+                foreach (var v in viajes)
+                {
+                    var nuevo = new ViajeResponse()
+                    {
+                        Id = v.Id,
+                        EmpleadoId = v.Empleado.Id,
+                        Estado = v.Estado,
+                        FechaFin = v.FechaFin,
+                        FechaInicio = v.FechaInicio,
+                        Gastos = null,
+                        Proyecto = v.Proyecto?.Nombre
+                    };
+
+                    if (v.Gastos != null)
+                    {
+                        var gastosRespone = new List<GastoResponse>();
+
+                        foreach (var g in v.Gastos)
+                        {
+                            var nuevoGastoResponse = new GastoResponse()
+                            {
+                                Id = g.Id,
+                                Estado = g.Estado,
+                                Fecha = g.Fecha,
+                                Moneda = g.Moneda,
+                                Tipo = g.Tipo?.Nombre,
                                 ViajeId = g.Viaje.Id,
                                 Total = g.Total
                             };
@@ -292,33 +392,50 @@ namespace Gevi.Api.Middleware
             };
         }
 
+        private HttpResponse<List<ViajeResponse>> newHttpErrorListResponse(Error error)
+        {
+            return new HttpResponse<List<ViajeResponse>>()
+            {
+                StatusCode = HttpStatusCode.InternalServerError,
+                ApiResponse = new ApiResponse<List<ViajeResponse>>()
+                {
+                    Data = null,
+                    Error = error
+                }
+            };
+        }
+
         private bool esValido(ViajeRequest viaje, GeviApiContext ctx, Empleado emp)
         {
             var res = ctx.Viajes
                         .Where(v => v.Empleado.Email.Equals(emp.Email))
                         .ToList();
-            bool valor = true;
+
+            bool esValido = true;
 
             if (res.Count != 0)
             {
                 foreach(var v in res)
                 {
-                    var inicioViajeNuevoValido = NotBetween(viaje.FechaInicio, v.FechaInicio, v.FechaFin);
-                    var finViajeNuevoValido = NotBetween(viaje.FechaFin, v.FechaInicio, v.FechaFin);
-
-                    if (inicioViajeNuevoValido && finViajeNuevoValido)
+                    if (esValido)
                     {
-                        var inicioViajeExistenteValido = NotBetween(v.FechaInicio, viaje.FechaInicio, viaje.FechaFin);
-                        var finViajeExistenteValido = NotBetween(v.FechaFin, viaje.FechaInicio, viaje.FechaFin);
+                        var inicioViajeNuevoValido = NotBetween(viaje.FechaInicio, v.FechaInicio, v.FechaFin);
+                        var finViajeNuevoValido = NotBetween(viaje.FechaFin, v.FechaInicio, v.FechaFin);
 
-                        return (inicioViajeExistenteValido && finViajeExistenteValido);
+                        if (inicioViajeNuevoValido && finViajeNuevoValido)
+                        {
+                            var inicioViajeExistenteValido = NotBetween(v.FechaInicio, viaje.FechaInicio, viaje.FechaFin);
+                            var finViajeExistenteValido = NotBetween(v.FechaFin, viaje.FechaInicio, viaje.FechaFin);
+
+                            esValido = inicioViajeExistenteValido && finViajeExistenteValido;
+                        }
+                        else
+                            esValido = false;
                     }
-
-                    return false;
                 }
             }
 
-            return valor;
+            return esValido;
         }
 
         private bool NotBetween(DateTime input, DateTime date1, DateTime date2)
