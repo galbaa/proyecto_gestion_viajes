@@ -142,11 +142,81 @@ namespace Gevi.Api.Middleware
                 return newHttpListResponse(response);
             }
         }
-
-        /*public HttpResponse<EstadisticasResponse> GetEstadisticas(DateTime inicio, DateTime fin)
+        public HttpResponse<EstadisticasResponse> GetEstadisticas(EstadisticasRequest request)
         {
+            if (request == null)
+                return newHttpEstadisticasErrorResponse(new Error("Los parametros pasados son invalidos."));
 
-        }*/
+            using (var db = new GeviApiContext())
+            {
+                var totalTransporte = db.Gastos
+                                            .Where(g => g.Estado == Estado.APROBADO &&
+                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && (g.Empleado != null) ? g.Empleado.Nombre.Equals(request.ClienteNombre) : true) &&
+                                                        (request.EmpleadoId > 0 && (g.Empleado != null) ? g.Empleado.Id == request.EmpleadoId : true) &&
+                                                        (!request.FechaInicio.Equals(DateTime.MinValue) ? g.Fecha >= request.FechaInicio : true) &&
+                                                        (!request.FechaFin.Equals(DateTime.MinValue) ? g.Fecha <= request.FechaFin : true))
+                                            .Where(g => g.Tipo.Nombre.Equals("TRANSPORTE"))
+                                            .Include(g => g.Empleado)
+                                            .Include(g => g.Tipo)
+                                            .Include(g => g.Viaje)
+                                            .ToList()
+                                            .Select(g => g.Total)
+                                            .Sum();
+
+                var totalGastronomico = db.Gastos
+                                            .Where(g => g.Estado == Estado.APROBADO &&
+                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && (g.Empleado != null) ? g.Empleado.Nombre.Equals(request.ClienteNombre) : true) &&
+                                                        (request.EmpleadoId > 0 && (g.Empleado != null) ? g.Empleado.Id == request.EmpleadoId : true) &&
+                                                        (!request.FechaInicio.Equals(DateTime.MinValue) ? g.Fecha >= request.FechaInicio : true) &&
+                                                        (!request.FechaFin.Equals(DateTime.MinValue) ? g.Fecha <= request.FechaFin : true))
+                                            .Where(g => g.Tipo.Nombre.Equals("GASTRONOMICO"))
+                                            .Include(g => g.Empleado)
+                                            .Include(g => g.Tipo)
+                                            .Include(g => g.Viaje)
+                                            .ToList()
+                                            .Select(g => g.Total)
+                                            .Sum();
+
+                var totalTelefonia = db.Gastos
+                                            .Where(g => g.Estado == Estado.APROBADO &&
+                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && (g.Empleado != null) ? g.Empleado.Nombre.Equals(request.ClienteNombre) : true) &&
+                                                        (request.EmpleadoId > 0 && (g.Empleado != null) ? g.Empleado.Id == request.EmpleadoId : true) &&
+                                                        (!request.FechaInicio.Equals(DateTime.MinValue) ? g.Fecha >= request.FechaInicio : true) &&
+                                                        (!request.FechaFin.Equals(DateTime.MinValue) ? g.Fecha <= request.FechaFin : true))
+                                            .Where(g => g.Tipo.Nombre.Equals("TELEFONIA"))
+                                            .Include(g => g.Empleado)
+                                            .Include(g => g.Tipo)
+                                            .Include(g => g.Viaje)
+                                            .ToList()
+                                            .Select(g => g.Total)
+                                            .Sum();
+
+                var totalOtros = db.Gastos
+                                            .Where(g => g.Estado == Estado.APROBADO &&
+                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && (g.Empleado != null) ? g.Empleado.Nombre.Equals(request.ClienteNombre) : true) &&
+                                                        (request.EmpleadoId > 0 && (g.Empleado != null) ? g.Empleado.Id == request.EmpleadoId : true) &&
+                                                        (!request.FechaInicio.Equals(DateTime.MinValue) ? g.Fecha >= request.FechaInicio : true) &&
+                                                        (!request.FechaFin.Equals(DateTime.MinValue) ? g.Fecha <= request.FechaFin : true))
+                                            .Where(g => g.Tipo.Nombre.Equals("OTRO"))
+                                            .Include(g => g.Empleado)
+                                            .Include(g => g.Tipo)
+                                            .Include(g => g.Viaje)
+                                            .ToList()
+                                            .Select(g => g.Total)
+                                            .Sum();
+
+
+                var response = new EstadisticasResponse()
+                {
+                    TotalTransporte = totalTransporte,
+                    TotalGastronomico = totalGastronomico,
+                    TotalTelefonia = totalTelefonia,
+                    TotalOtros = totalOtros
+                };
+
+                return newHttpEstadisticasResponse(response);
+            }
+        }
 
         private HttpResponse<GastoResponse> newHttpResponse(GastoResponse response)
         {
@@ -166,6 +236,30 @@ namespace Gevi.Api.Middleware
             {
                 StatusCode = HttpStatusCode.InternalServerError,
                 ApiResponse = new ApiResponse<GastoResponse>()
+                {
+                    Data = null,
+                    Error = error
+                }
+            };
+        }
+        private HttpResponse<EstadisticasResponse> newHttpEstadisticasResponse(EstadisticasResponse response)
+        {
+            return new HttpResponse<EstadisticasResponse>()
+            {
+                StatusCode = HttpStatusCode.OK,
+                ApiResponse = new ApiResponse<EstadisticasResponse>()
+                {
+                    Data = response,
+                    Error = null
+                }
+            };
+        }
+        private HttpResponse<EstadisticasResponse> newHttpEstadisticasErrorResponse(Error error)
+        {
+            return new HttpResponse<EstadisticasResponse>()
+            {
+                StatusCode = HttpStatusCode.InternalServerError,
+                ApiResponse = new ApiResponse<EstadisticasResponse>()
                 {
                     Data = null,
                     Error = error

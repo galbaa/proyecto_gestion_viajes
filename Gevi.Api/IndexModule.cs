@@ -214,6 +214,17 @@ namespace Gevi.Api
                     .WithStatusCode(gastoResponse.StatusCode)
                     .WithModel(gastoResponse.ApiResponse);
             };
+
+            Post["gastos/estadisticas"] = parameters =>
+            {
+                var estadisticasRequest = this.Bind<EstadisticasRequest>();
+                var gastoResponse = gastosManager.GetEstadisticas(estadisticasRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(gastoResponse.StatusCode)
+                    .WithModel(gastoResponse.ApiResponse);
+            };
         }
     }
 }
