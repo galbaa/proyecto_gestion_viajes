@@ -124,7 +124,8 @@ namespace Gevi.Api.Middleware
                                 Moneda = g.Moneda,
                                 Tipo = g.Tipo?.Nombre,
                                 Total = g.Total,
-                                ViajeId = viaje.Id
+                                ViajeId = viaje.Id,
+                                EmpleadoNombre = g.Empleado?.Nombre
                             };
 
                             gastos.Add(nuevoGasto);
@@ -184,8 +185,9 @@ namespace Gevi.Api.Middleware
                                         Fecha = g.Fecha,
                                         Moneda = g.Moneda,
                                         Tipo = g.Tipo?.Nombre,
-                                        ViajeId = g.Viaje.Id,
-                                        Total = g.Total
+                                        ViajeId = v.Id,
+                                        Total = g.Total,
+                                        EmpleadoNombre = g.Empleado?.Nombre
                                     };
 
                                     gastosRespone.Add(nuevoGastoResponse);
@@ -242,8 +244,9 @@ namespace Gevi.Api.Middleware
                                 Fecha = g.Fecha,
                                 Moneda = g.Moneda,
                                 Tipo = g.Tipo?.Nombre,
-                                ViajeId = g.Viaje.Id,
-                                Total = g.Total
+                                ViajeId = v.Id,
+                                Total = g.Total,
+                                EmpleadoNombre = g.Empleado?.Nombre
                             };
 
                             gastosRespone.Add(nuevoGastoResponse);
@@ -336,8 +339,9 @@ namespace Gevi.Api.Middleware
                                 Fecha = g.Fecha,
                                 Moneda = g.Moneda,
                                 Tipo = g.Tipo?.Nombre,
-                                ViajeId = g.Viaje.Id,
-                                Total = g.Total
+                                ViajeId = v.Id,
+                                Total = g.Total,
+                                EmpleadoNombre = g.Empleado?.Nombre
                             };
 
                             gastosRespone.Add(nuevoGastoResponse);
