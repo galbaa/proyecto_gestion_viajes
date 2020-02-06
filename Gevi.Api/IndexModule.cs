@@ -78,8 +78,8 @@ namespace Gevi.Api
 
             Post["viajes/entrefechas"] = parameters =>
             {
-                var viajeRequest = this.Bind<ViajeRequest>("estado", "empleadoId", "gastos", "proyectoId");
-                var viajeResponse = viajesManager.EntreFechas(viajeRequest.FechaInicio, viajeRequest.FechaFin);
+                var listadoViajesRequest = this.Bind<ListadoViajesRequest>();
+                var viajeResponse = viajesManager.EntreFechas(listadoViajesRequest);
 
                 return Negotiate
                     .WithContentType("application/json")

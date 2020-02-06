@@ -217,6 +217,7 @@
     <Compile Include="Models\Requests\ClienteRequest.cs" />
     <Compile Include="Models\Requests\EstadisticasRequest.cs" />
     <Compile Include="Models\Requests\GastoRequest.cs" />
+    <Compile Include="Models\Requests\ListadoViajesRequest.cs" />
     <Compile Include="Models\Requests\ProyectoRequest.cs" />
     <Compile Include="Models\Responses\ApiResponse.cs" />
     <Compile Include="Models\Cliente.cs" />

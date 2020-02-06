@@ -1,5 +1,6 @@
 ﻿using Gevi.Api.Middleware.Interfaces;
 using Gevi.Api.Models;
+using Gevi.Api.Models.Requests;
 using Gevi.Api.Models.Responses;
 using Nancy;
 using System;
@@ -262,54 +263,18 @@ namespace Gevi.Api.Middleware
             }
         }
 
-        public HttpResponse<List<ViajeResponse>> EntreFechas(DateTime inicio, DateTime fin)
+        public HttpResponse<List<ViajeResponse>> EntreFechas(ListadoViajesRequest request)
         {
             using (var db = new GeviApiContext())
             {
-                var viajes = new List<Viaje>();
-
-                if (inicio.Equals(DateTime.MinValue) && fin.Equals(DateTime.MinValue)) // inicio y fin son vacios
-                {
-                    viajes = db.Viajes
+                var viajes = db.Viajes
+                                    .Where(v => (!request.FechaInicio.Equals(DateTime.MinValue) ? v.FechaInicio >= request.FechaInicio : true) &&
+                                                (!request.FechaFin.Equals(DateTime.MinValue) ? v.FechaFin <= request.FechaFin : true) &&
+                                                (!String.IsNullOrEmpty(request.ClienteNombre) && (v.Proyecto != null) && (v.Proyecto.Cliente != null) ? v.Proyecto.Cliente.Nombre.Equals(request.ClienteNombre) : true))
                                     .Include(v => v.Empleado)
-                                    .Include(v => v.Gastos)
+                                    .Include(v => v.Gastos.Select(g => g.Tipo))
                                     .Include(v => v.Proyecto)
                                     .ToList();
-                }
-                else
-                {
-                    if (inicio.Equals(DateTime.MinValue)) // inicio es vacio
-                    {
-                        viajes = db.Viajes
-                                        .Where(v => v.FechaFin <= fin)
-                                        .Include(v => v.Empleado)
-                                        .Include(v => v.Gastos)
-                                        .Include(v => v.Proyecto)
-                                        .ToList();
-                    }
-                    else
-                    {
-                        if (fin.Equals(DateTime.MinValue)) // fin es vacio
-                        {
-                            viajes = db.Viajes
-                                        .Where(v => v.FechaInicio >= inicio)
-                                        .Include(v => v.Empleado)
-                                        .Include(v => v.Gastos)
-                                        .Include(v => v.Proyecto)
-                                        .ToList();
-                        }
-                        else
-                        {
-                            // inicio y fin tienen valor
-                            viajes = db.Viajes
-                                            .Where(v => v.FechaInicio >= inicio && v.FechaFin <= fin)
-                                            .Include(v => v.Empleado)
-                                            .Include(v => v.Gastos)
-                                            .Include(v => v.Proyecto)
-                                            .ToList();
-                        }
-                    }
-                }
 
                 var response = new List<ViajeResponse>();
 
