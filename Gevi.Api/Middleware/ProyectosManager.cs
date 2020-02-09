@@ -74,6 +74,13 @@ namespace Gevi.Api.Middleware
                 if (pro == null)
                     return newHttpErrorResponse(new Error("No existe el Proyecto"));
 
+                var viajes = db.Viajes
+                                .Where(v => v.Proyecto.Id == pro.Id)
+                                .Include(v => v.Empleado)
+                                .Include(v => v.Gastos)
+                                .Include(v => v.Proyecto)
+                                .ToList();
+
                 var response = new ProyectoResponse()
                 {
                     Id = pro.Id,
@@ -82,6 +89,26 @@ namespace Gevi.Api.Middleware
                     Cliente = pro.Cliente?.Nombre
                 };
 
+                if (viajes != null)
+                {
+                    foreach (var v in viajes)
+                    {
+                        var gastos = db.Gastos
+                            .Where(g => g.Viaje.Id == v.Id)
+                            .ToList();
+
+                        if (gastos != null)
+                        {
+                            foreach (var g in gastos)
+                            {
+                                db.Gastos.Remove(g);
+                                db.SaveChanges();
+                            }
+                        }
+                        db.Viajes.Remove(v);
+                        db.SaveChanges();
+                    }
+                }
                 db.Proyectos.Remove(pro);
                 db.SaveChanges();
                 
