@@ -24,7 +24,8 @@ namespace Gevi.Api.Middleware
                         Id = user.Id,
                         Email = user.Email,
                         FechaRegistro = user.FechaRegistro,
-                        Nombre = user.Nombre
+                        Nombre = user.Nombre,
+                        EsEmpleado = user is Empleado
                     });
                 }
                 else

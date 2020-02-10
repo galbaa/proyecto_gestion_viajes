@@ -60,6 +60,7 @@ namespace Gevi.Api.Middleware
                     Id = nuevo.Id,
                     Email = nuevo.Email,
                     Nombre = nuevo.Nombre,
+                    EsEmpleado = nuevo is Empleado,
                     FechaRegistro = DateTime.Today
                 };
 
