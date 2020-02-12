@@ -122,11 +122,11 @@ namespace Gevi.Api.Middleware
                                 Id = g.Id,
                                 Estado = g.Estado,
                                 Fecha = g.Fecha,
-                                Moneda = g.Moneda,
+                                Moneda = g.Moneda?.Nombre,
                                 Tipo = g.Tipo?.Nombre,
                                 Total = g.Total,
                                 ViajeId = viaje.Id,
-                                EmpleadoNombre = g.Empleado?.Nombre
+                                Empleado = g.Empleado?.Nombre
                             };
 
                             gastos.Add(nuevoGasto);
@@ -184,11 +184,11 @@ namespace Gevi.Api.Middleware
                                         Id = g.Id,
                                         Estado = g.Estado,
                                         Fecha = g.Fecha,
-                                        Moneda = g.Moneda,
+                                        Moneda = g.Moneda?.Nombre,
                                         Tipo = g.Tipo?.Nombre,
                                         ViajeId = v.Id,
                                         Total = g.Total,
-                                        EmpleadoNombre = g.Empleado?.Nombre
+                                        Empleado = g.Empleado?.Nombre
                                     };
 
                                     gastosRespone.Add(nuevoGastoResponse);
@@ -243,11 +243,11 @@ namespace Gevi.Api.Middleware
                                 Id = g.Id,
                                 Estado = g.Estado,
                                 Fecha = g.Fecha,
-                                Moneda = g.Moneda,
+                                Moneda = g.Moneda?.Nombre,
                                 Tipo = g.Tipo?.Nombre,
                                 ViajeId = v.Id,
                                 Total = g.Total,
-                                EmpleadoNombre = g.Empleado?.Nombre
+                                Empleado = g.Empleado?.Nombre
                             };
 
                             gastosRespone.Add(nuevoGastoResponse);
@@ -302,11 +302,11 @@ namespace Gevi.Api.Middleware
                                 Id = g.Id,
                                 Estado = g.Estado,
                                 Fecha = g.Fecha,
-                                Moneda = g.Moneda,
+                                Moneda = g.Moneda?.Nombre,
                                 Tipo = g.Tipo?.Nombre,
                                 ViajeId = v.Id,
                                 Total = g.Total,
-                                EmpleadoNombre = g.Empleado?.Nombre
+                                Empleado = g.Empleado?.Nombre
                             };
 
                             gastosRespone.Add(nuevoGastoResponse);

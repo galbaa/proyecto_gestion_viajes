@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Nancy;
 using Gevi.Api.Models;
+using Gevi.Api.Models.Responses;
 
 namespace Gevi.Api.Middleware.Interfaces
 {
     public interface ILoginManager
     {
-        HttpResponse<UsuarioResponse> Login(string username, string password);
+        HttpResponse<LoginResponse> Login(string username, string password);
     }
 }

@@ -6,7 +6,7 @@ namespace Gevi.Api.Models
     {
         public int Id { get; set; }
         public Estado Estado { get; set; }
-        public string Moneda { get; set; }
+        public Moneda Moneda { get; set; }
         public decimal Total { get; set; }
         public DateTime Fecha { get; set; }
         public Viaje Viaje { get; set; }

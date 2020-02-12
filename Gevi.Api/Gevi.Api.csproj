@@ -212,8 +212,13 @@
     <Compile Include="Migrations\202002031624492_se agrega empleado al gasto.Designer.cs">
       <DependentUpon>202002031624492_se agrega empleado al gasto.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202002120204249_se agrega clase Moneda. se agrega LoginResponse.cs" />
+    <Compile Include="Migrations\202002120204249_se agrega clase Moneda. se agrega LoginResponse.Designer.cs">
+      <DependentUpon>202002120204249_se agrega clase Moneda. se agrega LoginResponse.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Administrativo.cs" />
+    <Compile Include="Models\Moneda.cs" />
     <Compile Include="Models\Requests\ClienteRequest.cs" />
     <Compile Include="Models\Requests\EstadisticasRequest.cs" />
     <Compile Include="Models\Requests\GastoRequest.cs" />
@@ -231,7 +236,9 @@
     <Compile Include="Models\Responses\HttpResponse.cs" />
     <Compile Include="Models\Requests\LoginRequest.cs" />
     <Compile Include="Models\Proyecto.cs" />
+    <Compile Include="Models\Responses\LoginResponse.cs" />
     <Compile Include="Models\Responses\ProyectoResponse.cs" />
+    <Compile Include="Models\Responses\TipoResponse.cs" />
     <Compile Include="Models\TipoCliente.cs" />
     <Compile Include="Models\Responses\UsuarioResponse.cs" />
     <Compile Include="Models\TipoGasto.cs" />
@@ -287,6 +294,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002031624492_se agrega empleado al gasto.resx">
       <DependentUpon>202002031624492_se agrega empleado al gasto.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002120204249_se agrega clase Moneda. se agrega LoginResponse.resx">
+      <DependentUpon>202002120204249_se agrega clase Moneda. se agrega LoginResponse.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

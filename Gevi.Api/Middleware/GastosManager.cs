@@ -37,11 +37,15 @@ namespace Gevi.Api.Middleware
                                 .Where(t => t.Nombre.Equals(request.Tipo))
                                 .FirstOrDefault();
 
+                var moneda = db.Monedas
+                                .Where(m => m.Nombre.Equals(request.MonedaNombre))
+                                .FirstOrDefault();
+
                 var nuevo = new Gasto()
                 {
                     Estado = request.Estado,
                     Fecha = request.Fecha,
-                    Moneda = request.Moneda,
+                    Moneda = moneda,
                     Tipo = tipo,
                     Empleado = empleado,
                     Viaje = viaje,
@@ -63,10 +67,10 @@ namespace Gevi.Api.Middleware
                     Id = nuevo.Id,
                     Estado = nuevo.Estado,
                     Fecha = nuevo.Fecha,
-                    Moneda = nuevo.Moneda,
+                    Moneda = nuevo.Moneda?.Nombre,
                     Tipo = nuevo.Tipo?.Nombre,
                     ViajeId = nuevo.Viaje == null ? 0 : nuevo.Viaje.Id,
-                    EmpleadoNombre = nuevo.Empleado?.Nombre,
+                    Empleado = nuevo.Empleado?.Nombre,
                     Total = nuevo.Total
                 };
 
@@ -96,12 +100,12 @@ namespace Gevi.Api.Middleware
                     var response = new GastoResponse()
                     {
                         Id = gasto.Id,
-                        Moneda = gasto.Moneda,
+                        Moneda = gasto.Moneda?.Nombre,
                         Estado = gasto.Estado,
                         Fecha = gasto.Fecha,
                         Tipo = gasto.Tipo?.Nombre,
                         Total = gasto.Total,
-                        EmpleadoNombre = gasto.Empleado?.Nombre,
+                        Empleado = gasto.Empleado?.Nombre,
                         ViajeId = gasto.Viaje == null ? 0 : gasto.Viaje.Id
                     };
 
@@ -119,6 +123,8 @@ namespace Gevi.Api.Middleware
                                             .Where(g => g.Estado == Estado.PENDIENTE_APROBACION)
                                             .Include(g => g.Viaje)
                                             .Include(g => g.Tipo)
+                                            .Include(g => g.Empleado)
+                                            .Include(g => g.Moneda)
                                             .ToList();
 
                 var response = new List<GastoResponse>();
@@ -130,9 +136,10 @@ namespace Gevi.Api.Middleware
                         Id = g.Id,
                         Estado = g.Estado,
                         Fecha = g.Fecha,
-                        Moneda = g.Moneda,
+                        Moneda = g.Moneda?.Nombre,
                         Tipo = g.Tipo?.Nombre,
                         Total = g.Total,
+                        Empleado = g.Empleado?.Nombre,
                         ViajeId = g.Viaje == null ? 0 : g.Viaje.Id
                     };
 

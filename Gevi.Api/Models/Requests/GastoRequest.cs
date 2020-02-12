@@ -9,7 +9,7 @@ namespace Gevi.Api.Models.Requests
     {
         public int Id { get; set; }
         public Estado Estado { get; set; }
-        public string Moneda { get; set; }
+        public string MonedaNombre { get; set; }
         public decimal Total { get; set; }
         public DateTime Fecha { get; set; }
         public int ViajeId { get; set; }
