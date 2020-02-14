@@ -126,6 +126,7 @@ namespace Gevi.Api.Middleware
                                 Tipo = g.Tipo?.Nombre,
                                 Total = g.Total,
                                 ViajeId = viaje.Id,
+                                Proyecto = g.Viaje?.Proyecto?.Nombre,
                                 Empleado = g.Empleado?.Nombre
                             };
 
@@ -187,6 +188,7 @@ namespace Gevi.Api.Middleware
                                         Moneda = g.Moneda?.Nombre,
                                         Tipo = g.Tipo?.Nombre,
                                         ViajeId = v.Id,
+                                        Proyecto = g.Viaje?.Proyecto?.Nombre,
                                         Total = g.Total,
                                         Empleado = g.Empleado?.Nombre
                                     };
@@ -246,6 +248,7 @@ namespace Gevi.Api.Middleware
                                 Moneda = g.Moneda?.Nombre,
                                 Tipo = g.Tipo?.Nombre,
                                 ViajeId = v.Id,
+                                Proyecto = g.Viaje?.Proyecto?.Nombre,
                                 Total = g.Total,
                                 Empleado = g.Empleado?.Nombre
                             };
@@ -305,6 +308,7 @@ namespace Gevi.Api.Middleware
                                 Moneda = g.Moneda?.Nombre,
                                 Tipo = g.Tipo?.Nombre,
                                 ViajeId = v.Id,
+                                Proyecto = g.Viaje?.Proyecto?.Nombre,
                                 Total = g.Total,
                                 Empleado = g.Empleado?.Nombre
                             };

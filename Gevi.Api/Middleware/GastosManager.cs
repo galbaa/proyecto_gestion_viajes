@@ -25,56 +25,65 @@ namespace Gevi.Api.Middleware
                                     .Where(u => u is Empleado && u.Id == request.EmpleadoId)
                                     .Include(u => u.Viajes)
                                     .FirstOrDefault();
-
-                var viaje = db.Viajes
-                                .Where(v => v.Id == request.ViajeId)
-                                .Include(v => v.Proyecto)
-                                .Include(v => v.Gastos)
-                                .Include(v => v.Empleado)
-                                .FirstOrDefault();
-
-                var tipo = db.TipoGastos
-                                .Where(t => t.Nombre.Equals(request.Tipo))
-                                .FirstOrDefault();
-
-                var moneda = db.Monedas
-                                .Where(m => m.Nombre.Equals(request.MonedaNombre))
-                                .FirstOrDefault();
-
-                var nuevo = new Gasto()
+                if (empleado != null)
                 {
-                    Estado = request.Estado,
-                    Fecha = request.Fecha,
-                    Moneda = moneda,
-                    Tipo = tipo,
-                    Empleado = empleado,
-                    Viaje = viaje,
-                    Total = request.Total
-                };
+                    var viaje = db.Viajes
+                                    .Where(v => v.Id == request.ViajeId)
+                                    .Include(v => v.Proyecto)
+                                    .Include(v => v.Gastos)
+                                    .Include(v => v.Empleado)
+                                    .FirstOrDefault();
+                    if (viaje != null)
+                    {
+                        var tipo = db.TipoGastos
+                                        .Where(t => t.Nombre.Equals(request.Tipo))
+                                        .FirstOrDefault();
 
-                try
-                {
-                    db.Gastos.Add(nuevo);
-                    db.SaveChanges();
+                        var moneda = db.Monedas
+                                        .Where(m => m.Nombre.Equals(request.MonedaNombre))
+                                        .FirstOrDefault();
+
+                        var nuevo = new Gasto()
+                        {
+                            Estado = request.Estado,
+                            Fecha = request.Fecha,
+                            Moneda = moneda,
+                            Tipo = tipo,
+                            Empleado = empleado,
+                            Viaje = viaje,
+                            Total = request.Total
+                        };
+
+                        try
+                        {
+                            db.Gastos.Add(nuevo);
+                            db.SaveChanges();
+                        }
+                        catch (DbUpdateException)
+                        {
+                            return newHttpErrorResponse(new Error("Error al ingresar nuevo gasto."));
+                        }
+
+                        var response = new GastoResponse()
+                        {
+                            Id = nuevo.Id,
+                            Estado = nuevo.Estado,
+                            Fecha = nuevo.Fecha,
+                            Moneda = nuevo.Moneda?.Nombre,
+                            Tipo = nuevo.Tipo?.Nombre,
+                            ViajeId = nuevo.Viaje == null ? 0 : nuevo.Viaje.Id,
+                            Proyecto = nuevo.Viaje?.Proyecto?.Nombre,
+                            Empleado = nuevo.Empleado?.Nombre,
+                            Total = nuevo.Total
+                        };
+
+                        return newHttpResponse(response);
+                    }
+
+                    return newHttpErrorResponse(new Error("El viaje no existe"));
                 }
-                catch (DbUpdateException)
-                {
-                    return newHttpErrorResponse(new Error("Error al ingresar nuevo gasto."));
-                }
 
-                var response = new GastoResponse()
-                {
-                    Id = nuevo.Id,
-                    Estado = nuevo.Estado,
-                    Fecha = nuevo.Fecha,
-                    Moneda = nuevo.Moneda?.Nombre,
-                    Tipo = nuevo.Tipo?.Nombre,
-                    ViajeId = nuevo.Viaje == null ? 0 : nuevo.Viaje.Id,
-                    Empleado = nuevo.Empleado?.Nombre,
-                    Total = nuevo.Total
-                };
-
-                return newHttpResponse(response);
+                return newHttpErrorResponse(new Error("El empleado no existe"));
             }
         }
         public HttpResponse<GastoResponse> ValidarGasto(ValidacionRequest request)
@@ -88,7 +97,8 @@ namespace Gevi.Api.Middleware
                                 .Where(g => g.Id == request.Id)
                                 .Include(g => g.Tipo)
                                 .Include(g => g.Empleado)
-                                .Include(g => g.Viaje)
+                                .Include(g => g.Viaje.Proyecto)
+                                .Include(g => g.Moneda)
                                 .FirstOrDefault();
 
                 if (gasto != null)
@@ -106,6 +116,7 @@ namespace Gevi.Api.Middleware
                         Tipo = gasto.Tipo?.Nombre,
                         Total = gasto.Total,
                         Empleado = gasto.Empleado?.Nombre,
+                        Proyecto = gasto.Viaje?.Proyecto?.Nombre,
                         ViajeId = gasto.Viaje == null ? 0 : gasto.Viaje.Id
                     };
 
@@ -121,7 +132,7 @@ namespace Gevi.Api.Middleware
             {
                 var gastosPendientes = db.Gastos
                                             .Where(g => g.Estado == Estado.PENDIENTE_APROBACION)
-                                            .Include(g => g.Viaje)
+                                            .Include(g => g.Viaje.Proyecto)
                                             .Include(g => g.Tipo)
                                             .Include(g => g.Empleado)
                                             .Include(g => g.Moneda)
@@ -140,6 +151,7 @@ namespace Gevi.Api.Middleware
                         Tipo = g.Tipo?.Nombre,
                         Total = g.Total,
                         Empleado = g.Empleado?.Nombre,
+                        Proyecto = g.Viaje?.Proyecto?.Nombre,
                         ViajeId = g.Viaje == null ? 0 : g.Viaje.Id
                     };
 
