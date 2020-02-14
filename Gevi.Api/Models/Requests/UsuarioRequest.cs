@@ -8,6 +8,7 @@ namespace Gevi.Api.Models
 {
     public class UsuarioRequest
     {
+        public int UsuarioId { get; set; }
         public string Email { get; set; }
         public string Contrasenia { get; set; }
         public string Nombre { get; set; }

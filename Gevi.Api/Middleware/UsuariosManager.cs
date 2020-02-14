@@ -2,6 +2,7 @@
 using Gevi.Api.Models;
 using Nancy;
 using System;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 
@@ -68,6 +69,72 @@ namespace Gevi.Api.Middleware
             }
         }
 
+        public HttpResponse<UsuarioResponse> ModificarUsuario(UsuarioRequest request)
+        {
+            if (request == null)
+                return newHttpErrorResponse(new Error("El usuario que se intenta modificar es invalido."));
+
+            using (var db = new GeviApiContext())
+            {
+                var usuario = db.Usuarios
+                                .Where(u => u.Id == request.UsuarioId)
+                                .FirstOrDefault();
+
+                if (usuario == null)
+                    return newHttpErrorResponse(new Error("No existe el usuario"));
+
+                usuario.Nombre = request.Nombre;
+                usuario.Email = request.Email;
+
+                db.Entry(usuario).State = EntityState.Modified;
+                db.SaveChanges();
+
+                var response = new UsuarioResponse()
+                {
+                    Id = usuario.Id,
+                    Nombre = usuario.Nombre,
+                    Email = usuario.Email,
+                    EsEmpleado = usuario is Empleado,
+                    FechaRegistro = usuario.FechaRegistro
+                };
+
+                return newHttpResponse(response);
+            }
+        }
+
+        public HttpResponse<UsuarioResponse> CambiarContrasenia(UsuarioRequest request)
+        {
+            if (request == null)
+                return newHttpErrorResponse(new Error("El usuario que se intenta modificar es invalido."));
+
+            using (var db = new GeviApiContext())
+            {
+                var usuario = db.Usuarios
+                                    .Where(u => u.Id == request.UsuarioId)
+                                    .FirstOrDefault();
+
+                if (usuario == null)
+                    return newHttpErrorResponse(new Error("No existe el usuario"));
+
+                var encryptionManager = new EncryptionManager();
+                usuario.Contrasenia = encryptionManager.Encryptdata(request.Contrasenia);
+
+                db.Entry(usuario).State = EntityState.Modified;
+                db.SaveChanges();
+
+                var response = new UsuarioResponse()
+                {
+                    Id = usuario.Id,
+                    Nombre = usuario.Nombre,
+                    Email = usuario.Email,
+                    EsEmpleado = usuario is Empleado,
+                    FechaRegistro = usuario.FechaRegistro
+                };
+
+                return newHttpResponse(response);
+            }
+        }
+
         private HttpResponse<UsuarioResponse> newHttpResponse(UsuarioResponse response)
         {
             return new HttpResponse<UsuarioResponse>()
@@ -93,5 +160,6 @@ namespace Gevi.Api.Middleware
                 }
             };
         }
+
     }
 }

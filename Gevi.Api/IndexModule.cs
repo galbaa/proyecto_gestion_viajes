@@ -43,6 +43,28 @@ namespace Gevi.Api
                     .WithModel(usuarioResponse.ApiResponse);
             };
 
+            Put["usuarios/modificar"] = parameters =>
+            {
+                var usuarioRequest = this.Bind<UsuarioRequest>("contrasenia","esEmpleado","fechaRegistro");
+                var usuarioResponse = usuariosManager.ModificarUsuario(usuarioRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(usuarioResponse.StatusCode)
+                    .WithModel(usuarioResponse.ApiResponse);
+            };
+
+            Put["usuarios/cambiarcontrasenia"] = parameters =>
+            {
+                var usuarioRequest = this.Bind<UsuarioRequest>("nombre", "email", "esEmpleado", "fechaRegistro");
+                var usuarioResponse = usuariosManager.CambiarContrasenia(usuarioRequest);
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(usuarioResponse.StatusCode)
+                    .WithModel(usuarioResponse.ApiResponse);
+            };
+
             Post["viajes/nuevo"] = parameters =>
             {
                 var viajeRequest = this.Bind<ViajeRequest>();
