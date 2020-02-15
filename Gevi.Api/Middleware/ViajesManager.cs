@@ -27,7 +27,7 @@ namespace Gevi.Api.Middleware
                                     .FirstOrDefault();
 
                 var proyecto = db.Proyectos
-                                    .Where(p => p.Id == request.ProyectoId)
+                                    .Where(p => p.Nombre.Equals(request.ProyectoNombre))
                                     .Include(p => p.Cliente)
                                     .FirstOrDefault();
 
@@ -91,7 +91,7 @@ namespace Gevi.Api.Middleware
                 var viaje = db.Viajes
                     .Where(v => v.Id == request.Id)
                     .Include(u => u.Empleado)
-                    .Include(w => w.Proyecto)
+                    .Include(w => w.Proyecto.Cliente)
                     .FirstOrDefault();
 
                 if (viaje != null)
@@ -104,11 +104,13 @@ namespace Gevi.Api.Middleware
                     {
                         Id = viaje.Id,
                         EmpleadoId = viaje.Empleado.Id,
+                        EmpleadoNombre = viaje.Empleado?.Nombre,
                         Estado = request.Estado,
                         FechaInicio = viaje.FechaInicio,
                         FechaFin = viaje.FechaFin,
                         Gastos = null,
-                        Proyecto = viaje.Proyecto?.Nombre
+                        Proyecto = viaje.Proyecto?.Nombre,
+                        ClienteProyectoNombre = viaje.Proyecto?.Cliente?.Nombre
                     };
 
                     if (viaje.Gastos != null)

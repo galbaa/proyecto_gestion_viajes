@@ -16,5 +16,6 @@ namespace Gevi.Api.Models.Responses
         public List<TipoResponse> TipoClientes { get; set; }
         public List<Moneda> Monedas { get; set; }
         public List<TipoResponse> TipoGastos { get; set; }
+        public List<ViajeResponse> ViajesAprobados { get; set; }
     }
 }

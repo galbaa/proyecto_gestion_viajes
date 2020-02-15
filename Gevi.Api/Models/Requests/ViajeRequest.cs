@@ -11,5 +11,6 @@ namespace Gevi.Api.Models
         public int EmpleadoId { get; set; }
         public List<Gasto> Gastos { get; set; }
         public int ProyectoId { get; set; }
+        public string ProyectoNombre { get; set; }
     }
 }

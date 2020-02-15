@@ -17,15 +17,18 @@ namespace Gevi.Api.Middleware
 
             using (var db = new GeviApiContext())
             {
-                var user = db.Usuarios.Where(u => u.Email.Equals(username)
-                                && u.Contrasenia.Equals(pass)).FirstOrDefault();
+                var user = db.Usuarios
+                                .Where(u => u.Email.Equals(username) && u.Contrasenia.Equals(pass))
+                                .FirstOrDefault();
 
-                if(user != null)
+                if (user != null)
                 {
+                    #region cargarListas
                     var clientes = db.Clientes
-                                    .Include(c => c.Proyectos)
-                                    .Include(c => c.Tipo)
-                                    .ToList();
+                                            .Include(c => c.Proyectos)
+                                            .Include(c => c.Tipo)
+                                            .ToList();
+
 
                     var tipoClientes = db.TipoClientes.ToList();
                     var monedas = db.Monedas.ToList();
@@ -66,6 +69,82 @@ namespace Gevi.Api.Middleware
                         };
 
                         tipoGastosResponse.Add(nuevoTipoGasto);
+                    }
+                    #endregion
+
+                    if (user is Empleado)
+                    {
+                        Empleado usuario = user as Empleado;
+
+                        var viajes = db.Viajes
+                                     .Where(v => v.Empleado.Id == usuario.Id)
+                                     .Where(v => v.Estado == Estado.APROBADO)
+                                     .Include(v => v.Empleado)
+                                     .Include(v => v.Gastos)
+                                     .Include(v => v.Proyecto)
+                                     .ToList();
+
+                        var response = new List<ViajeResponse>();
+
+                        #region traerViajesDelEmpleado
+                        if (viajes != null)
+                        {
+                            foreach (var v in viajes)
+                            {
+                                var nuevo = new ViajeResponse()
+                                {
+                                    Id = v.Id,
+                                    EmpleadoId = usuario.Id,
+                                    Estado = v.Estado,
+                                    FechaFin = v.FechaFin,
+                                    FechaInicio = v.FechaInicio,
+                                    Gastos = null,
+                                    Proyecto = v.Proyecto?.Nombre
+                                };
+
+                                if (v.Gastos != null)
+                                {
+                                    var gastosRespone = new List<GastoResponse>();
+
+                                    foreach (var g in v.Gastos)
+                                    {
+                                        var nuevoGastoResponse = new GastoResponse()
+                                        {
+                                            Id = g.Id,
+                                            Estado = g.Estado,
+                                            Fecha = g.Fecha,
+                                            Moneda = g.Moneda?.Nombre,
+                                            Tipo = g.Tipo?.Nombre,
+                                            ViajeId = v.Id,
+                                            Proyecto = g.Viaje?.Proyecto?.Nombre,
+                                            Total = g.Total,
+                                            Empleado = g.Empleado?.Nombre
+                                        };
+
+                                        gastosRespone.Add(nuevoGastoResponse);
+                                    }
+
+                                    nuevo.Gastos = gastosRespone;
+                                }
+
+                                response.Add(nuevo);
+                            }
+                        }
+                        #endregion
+
+                        return newHttpResponse(new LoginResponse()
+                        {
+                            Id = user.Id,
+                            Email = user.Email,
+                            FechaRegistro = user.FechaRegistro,
+                            Nombre = user.Nombre,
+                            Clientes = clientesResponse,
+                            Monedas = monedas,
+                            TipoClientes = tipoClientesResponse,
+                            TipoGastos = tipoGastosResponse,
+                            EsEmpleado = user is Empleado,
+                            ViajesAprobados = response
+                        });
                     }
 
                     return newHttpResponse(new LoginResponse()
