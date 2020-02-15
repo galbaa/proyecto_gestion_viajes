@@ -119,6 +119,16 @@ namespace Gevi.Api
                     .WithModel(viajeResponse.ApiResponse);
             };
 
+            Get["viajes/pendientes"] = parameters =>
+            {
+                var viajeResponse = viajesManager.Pendientes();
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(viajeResponse.StatusCode)
+                    .WithModel(viajeResponse.ApiResponse);
+            };
+
             Post["clientes/nuevo"] = parameters =>
             {
                 var clienteRequest = this.Bind<ClienteRequest>();

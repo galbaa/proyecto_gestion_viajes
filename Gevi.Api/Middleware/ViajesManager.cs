@@ -211,6 +211,66 @@ namespace Gevi.Api.Middleware
             }
         }
 
+        public HttpResponse<List<ViajeResponse>> Pendientes()
+        {
+            using (var db = new GeviApiContext())
+            {
+                var viajes = db.Viajes
+                                .Where(v => v.Estado == Estado.PENDIENTE_APROBACION)
+                                .Include(v => v.Empleado)
+                                .Include(v => v.Gastos)
+                                .Include(v => v.Proyecto.Cliente)
+                                .ToList();
+
+                var response = new List<ViajeResponse>();
+
+                foreach (var v in viajes)
+                {
+                    var nuevo = new ViajeResponse()
+                    {
+                        Id = v.Id,
+                        EmpleadoId = v.Empleado.Id,
+                        Estado = v.Estado,
+                        FechaFin = v.FechaFin,
+                        FechaInicio = v.FechaInicio,
+                        Gastos = null,
+                        Proyecto = v.Proyecto?.Nombre,
+                        ClienteProyectoNombre = v.Proyecto?.Cliente?.Nombre,
+                        EmpleadoNombre = v.Empleado?.Nombre
+                    };
+
+                    if (v.Gastos != null)
+                    {
+                        var gastosRespone = new List<GastoResponse>();
+
+                        foreach (var g in v.Gastos)
+                        {
+                            var nuevoGastoResponse = new GastoResponse()
+                            {
+                                Id = g.Id,
+                                Estado = g.Estado,
+                                Fecha = g.Fecha,
+                                Moneda = g.Moneda?.Nombre,
+                                Tipo = g.Tipo?.Nombre,
+                                ViajeId = v.Id,
+                                Proyecto = g.Viaje?.Proyecto?.Nombre,
+                                Total = g.Total,
+                                Empleado = g.Empleado?.Nombre
+                            };
+
+                            gastosRespone.Add(nuevoGastoResponse);
+                        }
+
+                        nuevo.Gastos = gastosRespone;
+                    }
+
+                    response.Add(nuevo);
+                }
+
+                return newHttpListResponse(response);
+            }
+        }
+
         public HttpResponse<List<ViajeResponse>> Todos()
         {
             using (var db = new GeviApiContext())

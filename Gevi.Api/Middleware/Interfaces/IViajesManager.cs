@@ -10,6 +10,7 @@ namespace Gevi.Api.Middleware.Interfaces
         HttpResponse<ViajeResponse> ValidarViaje(ValidacionRequest request);
         HttpResponse<List<ViajeResponse>> Historial(ViajeRequest request);
         HttpResponse<List<ViajeResponse>> Todos();
+        HttpResponse<List<ViajeResponse>> Pendientes();
         HttpResponse<List<ViajeResponse>> EntreFechas(ListadoViajesRequest request);
     }
 }
