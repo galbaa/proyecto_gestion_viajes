@@ -153,7 +153,7 @@ namespace Gevi.Api.Middleware
                 var empleado = db.Usuarios
                                     .OfType<Empleado>()
                                     .Where(u => u is Empleado && u.Id == request.EmpleadoId)
-                                    .Include(u => u.Viajes)
+                                    .Include(u => u.Viajes.Select(v => v.Proyecto.Cliente))
                                     .FirstOrDefault();
 
                 if (empleado != null)
@@ -175,7 +175,9 @@ namespace Gevi.Api.Middleware
                                 FechaFin = v.FechaFin,
                                 FechaInicio = v.FechaInicio,
                                 Gastos = null,
-                                Proyecto = v.Proyecto?.Nombre
+                                Proyecto = v.Proyecto?.Nombre,
+                                ClienteProyectoNombre = v.Proyecto.Cliente.Nombre,
+                                EmpleadoNombre = empleado.Nombre
                             };
 
                             if (v.Gastos != null)
@@ -280,7 +282,7 @@ namespace Gevi.Api.Middleware
                 var viajes = db.Viajes
                                 .Include(v => v.Empleado)
                                 .Include(v => v.Gastos)
-                                .Include(v => v.Proyecto)
+                                .Include(v => v.Proyecto.Cliente)
                                 .ToList();
 
                 var response = new List<ViajeResponse>();
@@ -295,7 +297,9 @@ namespace Gevi.Api.Middleware
                         FechaFin = v.FechaFin,
                         FechaInicio = v.FechaInicio,
                         Gastos = null,
-                        Proyecto = v.Proyecto?.Nombre
+                        Proyecto = v.Proyecto?.Nombre,
+                        EmpleadoNombre = v.Empleado?.Nombre,
+                        ClienteProyectoNombre = v.Proyecto?.Cliente?.Nombre
                     };
 
                     if (v.Gastos != null)
@@ -340,7 +344,7 @@ namespace Gevi.Api.Middleware
                                                 (!String.IsNullOrEmpty(request.ClienteNombre) && (v.Proyecto != null) && (v.Proyecto.Cliente != null) ? v.Proyecto.Cliente.Nombre.Equals(request.ClienteNombre) : true))
                                     .Include(v => v.Empleado)
                                     .Include(v => v.Gastos.Select(g => g.Tipo))
-                                    .Include(v => v.Proyecto)
+                                    .Include(v => v.Proyecto.Cliente)
                                     .ToList();
 
                 var response = new List<ViajeResponse>();
@@ -355,7 +359,9 @@ namespace Gevi.Api.Middleware
                         FechaFin = v.FechaFin,
                         FechaInicio = v.FechaInicio,
                         Gastos = null,
-                        Proyecto = v.Proyecto?.Nombre
+                        Proyecto = v.Proyecto?.Nombre,
+                        ClienteProyectoNombre = v.Proyecto?.Cliente?.Nombre,
+                        EmpleadoNombre = v.Empleado.Nombre
                     };
 
                     if (v.Gastos != null)

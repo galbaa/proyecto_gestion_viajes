@@ -245,7 +245,6 @@
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\Requests\UsuarioRequest.cs" />
     <Compile Include="Models\Requests\ValidacionRequest.cs" />
-    <Compile Include="Models\UsuarioIdentity.cs" />
     <Compile Include="Models\Viaje.cs" />
     <Compile Include="Models\Requests\ViajeRequest.cs" />
     <Compile Include="Models\Responses\ViajeResponse.cs" />
