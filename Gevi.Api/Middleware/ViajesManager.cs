@@ -61,7 +61,9 @@ namespace Gevi.Api.Middleware
                         FechaInicio = request.FechaInicio,
                         FechaFin = request.FechaFin,
                         Gastos = null,
-                        Proyecto = proyecto.Nombre
+                        Proyecto = proyecto?.Nombre,
+                        EmpleadoNombre = empleado?.Nombre,
+                        ClienteProyectoNombre = proyecto?.Cliente?.Nombre
                     };
 
                     return newHttpResponse(response);
