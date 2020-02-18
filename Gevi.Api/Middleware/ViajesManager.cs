@@ -154,7 +154,8 @@ namespace Gevi.Api.Middleware
                                     .OfType<Empleado>()
                                     .Where(u => u is Empleado && u.Id == request.EmpleadoId)
                                     .Include(u => u.Viajes.Select(v => v.Proyecto.Cliente))
-                                    .Include(u => u.Viajes.Select(v => v.Gastos))
+                                    .Include(u => u.Viajes.Select(v => v.Gastos.Select(g => g.Tipo)))
+                                    .Include(u => u.Viajes.Select(v => v.Gastos.Select(g => g.Moneda)))
                                     .FirstOrDefault();
 
                 if (empleado != null)
@@ -223,7 +224,8 @@ namespace Gevi.Api.Middleware
                 var viajes = db.Viajes
                                 .Where(v => v.Estado == Estado.PENDIENTE_APROBACION)
                                 .Include(v => v.Empleado)
-                                .Include(v => v.Gastos)
+                                .Include(v => v.Gastos.Select(g => g.Tipo))
+                                .Include(v => v.Gastos.Select(g => g.Moneda))
                                 .Include(v => v.Proyecto.Cliente)
                                 .ToList();
 
@@ -282,7 +284,8 @@ namespace Gevi.Api.Middleware
             {
                 var viajes = db.Viajes
                                 .Include(v => v.Empleado)
-                                .Include(v => v.Gastos)
+                                .Include(v => v.Gastos.Select(g => g.Tipo))
+                                .Include(v => v.Gastos.Select(g => g.Moneda))
                                 .Include(v => v.Proyecto.Cliente)
                                 .ToList();
 
@@ -345,6 +348,7 @@ namespace Gevi.Api.Middleware
                                                 (!String.IsNullOrEmpty(request.ClienteNombre) && (v.Proyecto != null) && (v.Proyecto.Cliente != null) ? v.Proyecto.Cliente.Nombre.Equals(request.ClienteNombre) : true))
                                     .Include(v => v.Empleado)
                                     .Include(v => v.Gastos.Select(g => g.Tipo))
+                                    .Include(v => v.Gastos.Select(g => g.Moneda))
                                     .Include(v => v.Proyecto.Cliente)
                                     .ToList();
 
