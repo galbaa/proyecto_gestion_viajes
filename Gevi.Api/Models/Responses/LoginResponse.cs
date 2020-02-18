@@ -12,6 +12,7 @@ namespace Gevi.Api.Models.Responses
         public string Nombre { get; set; }
         public bool EsEmpleado { get; set; }
         public DateTime FechaRegistro { get; set; }
+        public List<Empleado> Empleados { get; set; }
         public List<ClienteResponse> Clientes { get; set; }
         public List<TipoResponse> TipoClientes { get; set; }
         public List<Moneda> Monedas { get; set; }

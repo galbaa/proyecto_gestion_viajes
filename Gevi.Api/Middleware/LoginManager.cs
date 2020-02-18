@@ -147,6 +147,27 @@ namespace Gevi.Api.Middleware
                         });
                     }
 
+                    if (user is Administrativo)
+                    {
+                        var empleados = db.Usuarios
+                                            .OfType<Empleado>()
+                                            .ToList();
+
+                        return newHttpResponse(new LoginResponse()
+                        {
+                            Id = user.Id,
+                            Email = user.Email,
+                            FechaRegistro = user.FechaRegistro,
+                            Nombre = user.Nombre,
+                            Clientes = clientesResponse,
+                            Monedas = monedas,
+                            TipoClientes = tipoClientesResponse,
+                            TipoGastos = tipoGastosResponse,
+                            EsEmpleado = user is Empleado,
+                            Empleados = empleados
+                        });
+                    }
+
                     return newHttpResponse(new LoginResponse()
                     {
                         Id = user.Id,
