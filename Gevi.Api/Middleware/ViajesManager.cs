@@ -154,6 +154,7 @@ namespace Gevi.Api.Middleware
                                     .OfType<Empleado>()
                                     .Where(u => u is Empleado && u.Id == request.EmpleadoId)
                                     .Include(u => u.Viajes.Select(v => v.Proyecto.Cliente))
+                                    .Include(u => u.Viajes.Select(v => v.Gastos))
                                     .FirstOrDefault();
 
                 if (empleado != null)
