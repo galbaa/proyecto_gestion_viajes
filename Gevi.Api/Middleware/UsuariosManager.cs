@@ -117,7 +117,17 @@ namespace Gevi.Api.Middleware
                     return newHttpErrorResponse(new Error("No existe el usuario"));
 
                 var encryptionManager = new EncryptionManager();
-                usuario.Contrasenia = encryptionManager.Encryptdata(request.Contrasenia);
+
+                var nuevaContraseniaEncriptada = encryptionManager.Encryptdata(request.Contrasenia);
+                var viejaContraseniaEncriptada = encryptionManager.Encryptdata(request.ContraseniaVieja);
+
+                if (!usuario.Contrasenia.Equals(viejaContraseniaEncriptada))
+                    return newHttpErrorResponse(new Error("Error en la contraseña"));
+
+                if (nuevaContraseniaEncriptada != viejaContraseniaEncriptada)
+                    return newHttpErrorResponse(new Error("La nueva contraseña no puede ser igual a la anterior"));
+                
+                usuario.Contrasenia = nuevaContraseniaEncriptada;
 
                 db.Entry(usuario).State = EntityState.Modified;
                 db.SaveChanges();

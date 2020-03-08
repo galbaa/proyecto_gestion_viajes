@@ -10,6 +10,7 @@ namespace Gevi.Api.Models
     {
         public int UsuarioId { get; set; }
         public string Email { get; set; }
+        public string ContraseniaVieja { get; set; }
         public string Contrasenia { get; set; }
         public string Nombre { get; set; }
         public bool EsEmpleado { get; set; }
