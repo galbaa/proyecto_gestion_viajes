@@ -124,7 +124,7 @@ namespace Gevi.Api.Middleware
                 if (!usuario.Contrasenia.Equals(viejaContraseniaEncriptada))
                     return newHttpErrorResponse(new Error("Error en la contraseña"));
 
-                if (nuevaContraseniaEncriptada != viejaContraseniaEncriptada)
+                if (nuevaContraseniaEncriptada == viejaContraseniaEncriptada)
                     return newHttpErrorResponse(new Error("La nueva contraseña no puede ser igual a la anterior"));
                 
                 usuario.Contrasenia = nuevaContraseniaEncriptada;
