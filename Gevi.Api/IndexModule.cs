@@ -32,6 +32,16 @@ namespace Gevi.Api
                     .WithModel(loginResponse.ApiResponse);
             };
 
+            Get["usuarios/todos"] = parameters =>
+            {
+                var usuarioResponse = usuariosManager.Todos();
+
+                return Negotiate
+                    .WithContentType("application/json")
+                    .WithStatusCode(usuarioResponse.StatusCode)
+                    .WithModel(usuarioResponse.ApiResponse);
+            };
+
             Post["usuarios/nuevo"] = parameters =>
             {
                 var usuarioRequest = this.Bind<UsuarioRequest>();

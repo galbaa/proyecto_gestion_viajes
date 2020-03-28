@@ -2,6 +2,7 @@
 using Gevi.Api.Models;
 using Nancy;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -10,6 +11,32 @@ namespace Gevi.Api.Middleware
 {
     public class UsuariosManager : IUsuariosManager
     {
+        public HttpResponse<List<UsuarioResponse>> Todos()
+        {
+            using (var db = new GeviApiContext())
+            {
+                var usuarios = db.Usuarios.ToList();
+
+                var response = new List<UsuarioResponse>();
+
+                foreach (var u in usuarios)
+                {
+                    var nuevo = new UsuarioResponse()
+                    {
+                        Id = u.Id,
+                        Email = u.Email,
+                        EsEmpleado = u is Empleado,
+                        FechaRegistro = u.FechaRegistro,
+                        Nombre = u.Nombre
+                    };
+
+                    response.Add(nuevo);
+                }
+
+                return newHttpListResponse(response);
+            }
+        }
+
         public HttpResponse<UsuarioResponse> NuevoUsuario(UsuarioRequest usuario)
         {
             if (usuario == null)
@@ -122,7 +149,7 @@ namespace Gevi.Api.Middleware
                 var viejaContraseniaEncriptada = encryptionManager.Encryptdata(request.ContraseniaVieja);
 
                 if (!usuario.Contrasenia.Equals(viejaContraseniaEncriptada))
-                    return newHttpErrorResponse(new Error("Error en la contraseña"));
+                    return newHttpErrorResponse(new Error("La contraseña actual no es correcta"));
 
                 if (nuevaContraseniaEncriptada == viejaContraseniaEncriptada)
                     return newHttpErrorResponse(new Error("La nueva contraseña no puede ser igual a la anterior"));
@@ -167,6 +194,19 @@ namespace Gevi.Api.Middleware
                 {
                     Data = null,
                     Error = error
+                }
+            };
+        }
+
+        private HttpResponse<List<UsuarioResponse>> newHttpListResponse(List<UsuarioResponse> response)
+        {
+            return new HttpResponse<List<UsuarioResponse>>()
+            {
+                StatusCode = HttpStatusCode.OK,
+                ApiResponse = new ApiResponse<List<UsuarioResponse>>()
+                {
+                    Data = response,
+                    Error = null
                 }
             };
         }
