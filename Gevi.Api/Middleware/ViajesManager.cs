@@ -31,7 +31,7 @@ namespace Gevi.Api.Middleware
                                     .Include(p => p.Cliente)
                                     .FirstOrDefault();
 
-                if (empleado != null && proyecto != null && esValido(request, db, empleado) )
+                if (request?.FechaInicio < request?.FechaFin && empleado != null && proyecto != null && esValido(request, db, empleado))
                 {
                     var nuevo = new Viaje()
                     {
@@ -70,14 +70,19 @@ namespace Gevi.Api.Middleware
                 }
                 else
                 {
-                    if (empleado == null)
-                        return newHttpErrorResponse(new Error("No existe el empleado"));
+                    if (request?.FechaInicio >= request?.FechaFin)
+                        return newHttpErrorResponse(new Error("La fecha de inicio debe ser mayor a la de fin"));
                     else
                     {
-                        if (proyecto == null)
-                            return newHttpErrorResponse(new Error("No existe el proyecto"));
+                        if (empleado == null)
+                            return newHttpErrorResponse(new Error("No existe el empleado"));
                         else
-                            return newHttpErrorResponse(new Error("Ya existe un viaje en esa fecha para el empleado."));
+                        {
+                            if (proyecto == null)
+                                return newHttpErrorResponse(new Error("No existe el proyecto"));
+                            else
+                                return newHttpErrorResponse(new Error("Ya existe un viaje en esa fecha para el empleado."));
+                        }
                     }
                 }
             }
