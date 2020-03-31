@@ -131,14 +131,18 @@ namespace Gevi.Api.Middleware
                 var cli = db.Clientes
                                 .Where(c => c.Nombre.Equals(request.Nombre))
                                 .Include(c => c.Proyectos)
+                                .Include(c => c.Tipo)
                                 .FirstOrDefault();
-
+                
                 var tipo = db.TipoClientes
                                 .Where(t => t.Nombre.Equals(request.Tipo))
                                 .FirstOrDefault();
 
                 if (cli == null)
                     return newHttpErrorResponse(new Error("No existe el cliente"));
+
+                if (cli.Tipo == tipo)
+                    return newHttpErrorResponse(new Error("El cliente ya es de ese tipo"));
 
                 cli.Nombre = request.Nombre;
                 cli.Tipo = tipo;
