@@ -170,7 +170,9 @@ namespace Gevi.Api.Middleware
             {
                 var totalTransporte = db.Gastos
                                             .Where(g => g.Estado == Estado.APROBADO &&
-                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && (g.Empleado != null) ? g.Empleado.Nombre.Equals(request.ClienteNombre) : true) &&
+                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && 
+                                                            (g.Viaje != null) && (g.Viaje.Proyecto != null) &&
+                                                            (g.Viaje.Proyecto.Cliente != null) ? g.Viaje.Proyecto.Cliente.Nombre.Equals(request.ClienteNombre) : true) &&
                                                         (request.EmpleadoId > 0 && (g.Empleado != null) ? g.Empleado.Id == request.EmpleadoId : true) &&
                                                         (!request.FechaInicio.Equals(DateTime.MinValue) ? g.Fecha >= request.FechaInicio : true) &&
                                                         (!request.FechaFin.Equals(DateTime.MinValue) ? g.Fecha <= request.FechaFin : true))
@@ -184,7 +186,9 @@ namespace Gevi.Api.Middleware
 
                 var totalGastronomico = db.Gastos
                                             .Where(g => g.Estado == Estado.APROBADO &&
-                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && (g.Empleado != null) ? g.Empleado.Nombre.Equals(request.ClienteNombre) : true) &&
+                                                        (!String.IsNullOrEmpty(request.ClienteNombre) &&
+                                                            (g.Viaje != null) && (g.Viaje.Proyecto != null) &&
+                                                            (g.Viaje.Proyecto.Cliente != null) ? g.Viaje.Proyecto.Cliente.Nombre.Equals(request.ClienteNombre) : true) &&
                                                         (request.EmpleadoId > 0 && (g.Empleado != null) ? g.Empleado.Id == request.EmpleadoId : true) &&
                                                         (!request.FechaInicio.Equals(DateTime.MinValue) ? g.Fecha >= request.FechaInicio : true) &&
                                                         (!request.FechaFin.Equals(DateTime.MinValue) ? g.Fecha <= request.FechaFin : true))
@@ -198,7 +202,9 @@ namespace Gevi.Api.Middleware
 
                 var totalTelefonia = db.Gastos
                                             .Where(g => g.Estado == Estado.APROBADO &&
-                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && (g.Empleado != null) ? g.Empleado.Nombre.Equals(request.ClienteNombre) : true) &&
+                                                        (!String.IsNullOrEmpty(request.ClienteNombre) &&
+                                                            (g.Viaje != null) && (g.Viaje.Proyecto != null) &&
+                                                            (g.Viaje.Proyecto.Cliente != null) ? g.Viaje.Proyecto.Cliente.Nombre.Equals(request.ClienteNombre) : true) &&
                                                         (request.EmpleadoId > 0 && (g.Empleado != null) ? g.Empleado.Id == request.EmpleadoId : true) &&
                                                         (!request.FechaInicio.Equals(DateTime.MinValue) ? g.Fecha >= request.FechaInicio : true) &&
                                                         (!request.FechaFin.Equals(DateTime.MinValue) ? g.Fecha <= request.FechaFin : true))
@@ -212,11 +218,13 @@ namespace Gevi.Api.Middleware
 
                 var totalOtros = db.Gastos
                                             .Where(g => g.Estado == Estado.APROBADO &&
-                                                        (!String.IsNullOrEmpty(request.ClienteNombre) && (g.Empleado != null) ? g.Empleado.Nombre.Equals(request.ClienteNombre) : true) &&
+                                                        (!String.IsNullOrEmpty(request.ClienteNombre) &&
+                                                            (g.Viaje != null) && (g.Viaje.Proyecto != null) &&
+                                                            (g.Viaje.Proyecto.Cliente != null) ? g.Viaje.Proyecto.Cliente.Nombre.Equals(request.ClienteNombre) : true) &&
                                                         (request.EmpleadoId > 0 && (g.Empleado != null) ? g.Empleado.Id == request.EmpleadoId : true) &&
                                                         (!request.FechaInicio.Equals(DateTime.MinValue) ? g.Fecha >= request.FechaInicio : true) &&
                                                         (!request.FechaFin.Equals(DateTime.MinValue) ? g.Fecha <= request.FechaFin : true))
-                                            .Where(g => g.Tipo.Nombre.Equals("OTRO"))
+                                            .Where(g => g.Tipo.Nombre.Equals("OTROS"))
                                             .Include(g => g.Empleado)
                                             .Include(g => g.Tipo)
                                             .Include(g => g.Viaje)
