@@ -33,7 +33,9 @@ namespace Gevi.Api.Middleware
                                     .Include(v => v.Gastos)
                                     .Include(v => v.Empleado)
                                     .FirstOrDefault();
-                    if (viaje != null)
+                    if (viaje != null && 
+                        request.Fecha >= viaje.FechaInicio && 
+                        request.Fecha <= viaje.FechaFin)
                     {
                         var tipo = db.TipoGastos
                                         .Where(t => t.Nombre.Equals(request.Tipo))
@@ -79,8 +81,13 @@ namespace Gevi.Api.Middleware
 
                         return newHttpResponse(response);
                     }
-
-                    return newHttpErrorResponse(new Error("El viaje no existe"));
+                    else
+                    {
+                        if (viaje == null)
+                            return newHttpErrorResponse(new Error("El viaje no existe"));
+                        else
+                            return newHttpErrorResponse(new Error("La fecha del gasto debe pertenecer al viaje"));
+                    }
                 }
 
                 return newHttpErrorResponse(new Error("El empleado no existe"));

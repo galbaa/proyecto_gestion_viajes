@@ -130,6 +130,14 @@ namespace Gevi.Api.Middleware
                 if (pro == null)
                     return newHttpErrorResponse(new Error("No existe el Proyecto"));
 
+                if (pro.Cliente != null &&
+                    pro.Cliente.Nombre.Equals(request.ClienteNombre) &&
+                    pro.Nombre.Equals(request.Nombre) &&
+                    pro.FechaInicio == request.FechaInicio)
+                {
+                    return newHttpErrorResponse(new Error("El proyecto no se modifico"));
+                }
+
                 var cli = db.Clientes
                                 .Where(c => c.Nombre.Equals(request.ClienteNombre))
                                 .Include(c => c.Proyectos)
